@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vegas Dashboard | Central de Operações</title>
+<title>Vegas_Dashboard_SAC</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
@@ -517,6 +517,31 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
   .kpi-grid{grid-template-columns:1fr;}
   .content{padding:16px;}
 }
+
+/* ── DESCRIÇÃO EXPANDÍVEL ── */
+.desc-cell{
+  max-width:220px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--muted);cursor:pointer;transition:.2s;
+}
+.desc-cell:hover{color:var(--cyan);}
+.desc-cell.empty{color:rgba(185,197,212,.25);font-style:italic;}
+.row-detail{
+  display:none;
+  background:rgba(0,212,255,.04);
+  border-left:3px solid var(--cyan);
+}
+.row-detail.open{display:table-row;}
+.row-detail td{
+  padding:12px 18px 16px 24px;
+  color:var(--text);font-size:.85rem;line-height:1.6;
+  white-space:normal;
+}
+.detail-label{
+  font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:4px;font-weight:600;
+}
+.detail-text{color:var(--text);}
 </style>
 </head>
 <body>
@@ -742,10 +767,11 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
                 <th onclick="sortTable('decisao')">Decisão ↕</th>
                 <th onclick="sortTable('data_hora')">Data/Hora ↕</th>
                 <th>Motivos</th>
+                <th>Descrição</th>
               </tr>
             </thead>
             <tbody id="tabelaBody">
-              <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
+              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -853,7 +879,7 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
               </tr>
             </thead>
             <tbody id="retencaoBody">
-              <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
+              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1326,7 +1352,8 @@ function renderTabela(){
   if(busca) data = data.filter(r =>
     r.nome.toLowerCase().includes(busca) ||
     r.protocolo.toLowerCase().includes(busca) ||
-    r.email.toLowerCase().includes(busca)
+    r.email.toLowerCase().includes(busca) ||
+    (r.descricao||'').toLowerCase().includes(busca)
   );
 
   data.sort((a,b) => {
@@ -1342,14 +1369,17 @@ function renderTabela(){
 
   const tbody = document.getElementById('tabelaBody');
   if(!slice.length){
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
   } else {
-    tbody.innerHTML = slice.map(r => {
+    tbody.innerHTML = slice.map((r, i) => {
       const isProp = r.decisao.toLowerCase().includes('proposta');
       const tagClass = isProp ? 'tag-proposta' : 'tag-cancelamento';
       const tagLabel = isProp ? '✅ Proposta' : '❌ Cancelamento';
-      const motStr = (r.motivos||'').split(',').slice(0,2).join(', ');
-      return `<tr>
+      const motStr = (r.motivos||'').split(',').slice(0,2).map(m=>m.trim()).filter(Boolean).join(', ') || '—';
+      const desc = (r.descricao||'').trim();
+      const descPreview = desc.length > 50 ? desc.slice(0,50) + '...' : desc;
+      const rowId = 'detail-' + i;
+      return `<tr onclick="toggleDetail('${rowId}')" style="cursor:pointer;">
         <td><span class="proto-tag">${r.protocolo}</span></td>
         <td>${r.nome}</td>
         <td>${r.telefone}</td>
@@ -1357,12 +1387,27 @@ function renderTabela(){
         <td><span class="status-tag ${tagClass}">${tagLabel}</span></td>
         <td>${r.data_hora}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;color:var(--muted)">${motStr}</td>
+        <td class="desc-cell ${!desc ? 'empty' : ''}" title="${desc.replace(/"/g,'&quot;')}">${descPreview || 'sem descrição'}</td>
+      </tr>
+      <tr id="${rowId}" class="row-detail">
+        <td colspan="8">
+          <div class="detail-label">📝 Descrição Completa — ${r.protocolo} · ${r.nome}</div>
+          <div class="detail-text">${desc || '<em style="color:var(--muted)">Nenhuma descrição informada pelo cliente.</em>'}</div>
+          ${r.motivos && r.motivos !== 'Não informado' ? '<div class="detail-label" style="margin-top:10px">📋 Motivos</div><div class="detail-text">' + r.motivos + '</div>' : ''}
+        </td>
       </tr>`;
     }).join('');
   }
 
   document.getElementById('paginfoText').textContent = `${total} registros`;
   renderPaginacao(pages);
+}
+
+
+function toggleDetail(id){
+  const row = document.getElementById(id);
+  if(!row) return;
+  row.classList.toggle('open');
 }
 
 function sortTable(key){
