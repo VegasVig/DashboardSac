@@ -1110,7 +1110,7 @@ function normalizar(r){
     motivos   : String(r.motivos    || r['Motivos']    || ''),
     descricao : String(r.descricao  || r['Descrição']  || r['Descricao'] || ''),
     decisao   : String(r.decisao    || r['Decisão']    || r['Decisao']   || r['Status'] || ''),
-    data_hora : String(r.data_hora  || r['Data/Hora']  || r['data']      || ''),
+    data_hora : formatData(String(r.data_hora  || r['Data/Hora']  || r['data'] || '')),
   };
 }
 
@@ -1136,12 +1136,20 @@ function filtrarPorDias(data, dias){
 
 function parseData(str){
   if(!str) return null;
-  // formato pt-BR: DD/MM/YYYY HH:MM:SS ou DD/MM/YYYY, HH:MM
-  const m = str.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if(m) return new Date(`${m[3]}-${m[2]}-${m[1]}`);
+  if(/^\d{4}-\d{2}-\d{2}T/.test(str)) return new Date(str);
+  const m = str.match(/(\d{2})\/(\d{2})\/(\d{4})(?:[, ]+(\d{2}:\d{2}))?/);
+  if(m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]||'00:00'}:00`);
   const d = new Date(str);
   return isNaN(d) ? null : d;
 }
+
+function formatData(str){
+  const d = parseData(str);
+  if(!d) return str || '—';
+  const pad = n => String(n).padStart(2,'0');
+  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 
 function processar(){
   const dias = getDiasCortado();
