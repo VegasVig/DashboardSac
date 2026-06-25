@@ -768,10 +768,11 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
                 <th onclick="sortTable('data_hora')">Data/Hora ↕</th>
                 <th>Motivos</th>
                 <th>Descrição</th>
+                <th>Ação</th>
               </tr>
             </thead>
             <tbody id="tabelaBody">
-              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -879,7 +880,7 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
               </tr>
             </thead>
             <tbody id="retencaoBody">
-              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -920,7 +921,7 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
           <input class="config-input" type="text" id="cfgScriptUrl"
             placeholder="https://script.google.com/macros/s/SEU_ID/exec">
           <div class="config-hint">
-            "https://script.google.com/macros/s/AKfycbwC-FFx_ZCXyaQJ91tI6xY5iXaQM4p6AfaC_LVtwCXKXq9LcFied_2UCSOT-6N25H3I-g/exec"<br>
+            'https://script.google.com/macros/s/AKfycbyWViN2diFKWYk4GyFkMvacyn8AO16KN-DcTj6trafP3fqu22HcmClIIHMpTE35JP7gOw/exec'<br>
             O script precisa aceitar GET com <code>?action=getDados</code> e retornar JSON com os registros.
           </div>
         </div>
@@ -976,7 +977,7 @@ function doGet(e) {
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────
-let SCRIPT_URL = localStorage.getItem('vegas_script_url') || 'https://script.google.com/macros/s/AKfycbwC-FFx_ZCXyaQJ91tI6xY5iXaQM4p6AfaC_LVtwCXKXq9LcFied_2UCSOT-6N25H3I-g/exec';
+let SCRIPT_URL = localStorage.getItem('vegas_script_url') || 'https://script.google.com/macros/s/AKfycbyWViN2diFKWYk4GyFkMvacyn8AO16KN-DcTj6trafP3fqu22HcmClIIHMpTE35JP7gOw/exec';
 let AUTO_REFRESH_SEC = parseInt(localStorage.getItem('vegas_auto_refresh') || '60');
 let autoRefreshTimer = null;
 
@@ -1110,7 +1111,8 @@ function normalizar(r){
     motivos   : String(r.motivos    || r['Motivos']    || ''),
     descricao : String(r.descricao  || r['Descrição']  || r['Descricao'] || ''),
     decisao   : String(r.decisao    || r['Decisão']    || r['Decisao']   || r['Status'] || ''),
-    data_hora : formatData(String(r.data_hora  || r['Data/Hora']  || r['data'] || '')),
+    data_hora  : formatData(String(r.data_hora  || r['Data/Hora']  || r['data'] || '')),
+    respondido : String(r.respondido || r['Respondido'] || r['Status'] || ''),
   };
 }
 
@@ -1377,7 +1379,7 @@ function renderTabela(){
 
   const tbody = document.getElementById('tabelaBody');
   if(!slice.length){
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
   } else {
     tbody.innerHTML = slice.map((r, i) => {
       const isProp = r.decisao.toLowerCase().includes('proposta');
@@ -1398,7 +1400,7 @@ function renderTabela(){
         <td class="desc-cell ${!desc ? 'empty' : ''}" title="${desc.replace(/"/g,'&quot;')}">${descPreview || 'sem descrição'}</td>
       </tr>
       <tr id="${rowId}" class="row-detail">
-        <td colspan="8">
+        <td colspan="9">
           <div class="detail-label">📝 Descrição Completa — ${r.protocolo} · ${r.nome}</div>
           <div class="detail-text">${desc || '<em style="color:var(--muted)">Nenhuma descrição informada pelo cliente.</em>'}</div>
           ${r.motivos && r.motivos !== 'Não informado' ? '<div class="detail-label" style="margin-top:10px">📋 Motivos</div><div class="detail-text">' + r.motivos + '</div>' : ''}
@@ -1422,6 +1424,58 @@ function sortTable(key){
   if(sortKey === key) sortDir *= -1;
   else { sortKey = key; sortDir = -1; }
   renderTabela();
+}
+
+// ── MARCAR RESPONDIDO ─────────────────────────────────────────────
+function marcarRespondido(protocolo, btn){
+  btn.disabled = true;
+  btn.textContent = '⏳ Salvando...';
+  btn.style.color = 'var(--amber)';
+  btn.style.borderColor = 'rgba(255,179,0,.3)';
+
+  const url = SCRIPT_URL + '?action=marcarRespondido&protocolo=' + encodeURIComponent(protocolo);
+  const cbName = '__vegas_resp_' + Date.now();
+  const script = document.createElement('script');
+  const timeout = setTimeout(() => {
+    script.remove();
+    btn.textContent = '❌ Erro';
+    btn.style.color = 'var(--red)';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '📩 Marcar';
+      btn.style.color = 'var(--cyan)';
+      btn.style.borderColor = 'rgba(0,212,255,.3)';
+    }, 2000);
+  }, 10000);
+
+  window[cbName] = function(res){
+    clearTimeout(timeout);
+    script.remove();
+    delete window[cbName];
+    if(res && res.ok){
+      btn.textContent = '✅ Respondido';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'rgba(0,255,178,.3)';
+      btn.style.background = 'rgba(0,255,178,.08)';
+      // Atualiza dado local
+      const item = allData.find(r => r.protocolo === protocolo);
+      if(item) item.respondido = 'Respondido';
+    } else {
+      btn.disabled = false;
+      btn.textContent = '❌ Erro';
+      btn.style.color = 'var(--red)';
+      setTimeout(() => {
+        btn.textContent = '📩 Marcar';
+        btn.style.color = 'var(--cyan)';
+        btn.style.borderColor = 'rgba(0,212,255,.3)';
+        btn.disabled = false;
+      }, 2000);
+    }
+  };
+
+  script.src = url + '&callback=' + cbName;
+  script.onerror = () => { clearTimeout(timeout); window[cbName]({ok:false}); };
+  document.head.appendChild(script);
 }
 
 function renderPaginacao(pages){
