@@ -426,7 +426,7 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
 .motivo-label{font-size:.82rem;color:var(--text);min-width:180px;flex-shrink:0;}
 .motivo-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;}
 .motivo-bar{height:100%;border-radius:8px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.motivo-count{font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:30px;text-align:right;}
+.motivo-count覆{font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:30px;text-align:right;}
 
 /* ── ALERTS ── */
 .alerts-list{display:flex;flex-direction:column;gap:10px;}
@@ -518,6 +518,32 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
   .content{padding:16px;}
 }
 
+/* ── BOTÃO MARCAR RESPONDIDO ── */
+.btn-respondido{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 12px;border-radius:6px;
+  border:1px solid rgba(0,212,255,.3);
+  background:rgba(0,212,255,.06);
+  color:var(--cyan);font-size:.75rem;font-weight:600;
+  cursor:pointer;transition:.2s;
+  font-family:'Rajdhani',sans-serif;white-space:nowrap;
+}
+.btn-respondido:hover:not(:disabled){
+  background:rgba(0,212,255,.15);border-color:var(--cyan);
+}
+.btn-respondido:disabled{opacity:.6;cursor:not-allowed;}
+.btn-respondido.done{
+  background:rgba(0,255,178,.08);border-color:rgba(0,255,178,.3);
+  color:var(--green);cursor:default;
+}
+.tag-respondido{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.72rem;font-weight:700;
+  padding:3px 10px;border-radius:20px;
+  background:rgba(0,255,178,.1);border:1px solid rgba(0,255,178,.25);
+  color:var(--green);text-transform:uppercase;letter-spacing:.5px;
+}
+
 /* ── DESCRIÇÃO EXPANDÍVEL ── */
 .desc-cell{
   max-width:220px;
@@ -546,13 +572,11 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
 </head>
 <body>
 
-<!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loader-ring"></div>
   <div class="loader-text">Carregando dados...</div>
 </div>
 
-<!-- ── SIDEBAR ── -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <img src="./assets/logovegas.png" alt="Vegas" style="width:160px;display:block;margin:0 auto 8px;filter:brightness(0) invert(1);">
@@ -600,10 +624,8 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
   </div>
 </aside>
 
-<!-- ── MAIN ── -->
 <div class="main">
 
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-title" id="topbarTitle">Visão Geral</div>
     <div class="topbar-actions">
@@ -618,10 +640,8 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
     </div>
   </div>
 
-  <!-- ── CONTENT ── -->
   <div class="content">
 
-    <!-- ═══════════════ OVERVIEW ═══════════════ -->
     <section class="section active" id="sec-overview">
       <div class="page-header">
         <div>
@@ -638,7 +658,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
         </div>
       </div>
 
-      <!-- KPIs -->
       <div class="kpi-grid" id="kpiGrid">
         <div class="kpi-card">
           <div class="kpi-accent accent-cyan"></div>
@@ -678,7 +697,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
         </div>
       </div>
 
-      <!-- Gráficos principais -->
       <div class="charts-grid">
         <div class="chart-card">
           <div class="chart-header">
@@ -704,7 +722,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
         </div>
       </div>
 
-      <!-- Satisfação + Motivos -->
       <div class="charts-grid">
         <div class="chart-card">
           <div class="chart-header">
@@ -727,7 +744,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
       </div>
     </section>
 
-    <!-- ═══════════════ CANCELAMENTOS ═══════════════ -->
     <section class="section" id="sec-cancelamentos">
       <div class="page-header">
         <div>
@@ -768,10 +784,11 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
                 <th onclick="sortTable('data_hora')">Data/Hora ↕</th>
                 <th>Motivos</th>
                 <th>Descrição</th>
+                <th>Ação</th>
               </tr>
             </thead>
             <tbody id="tabelaBody">
-              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -782,7 +799,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
       </div>
     </section>
 
-    <!-- ═══════════════ ANÁLISE ═══════════════ -->
     <section class="section" id="sec-analise">
       <div class="page-header">
         <div>
@@ -834,7 +850,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
       </div>
     </section>
 
-    <!-- ═══════════════ RETENÇÃO ═══════════════ -->
     <section class="section" id="sec-retencao">
       <div class="page-header">
         <div>
@@ -879,14 +894,13 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
               </tr>
             </thead>
             <tbody id="retencaoBody">
-              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════ ALERTAS ═══════════════ -->
     <section class="section" id="sec-alertas">
       <div class="page-header">
         <div>
@@ -904,7 +918,6 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
       </div>
     </section>
 
-    <!-- ═══════════════ CONFIG ═══════════════ -->
     <section class="section" id="sec-config">
       <div class="page-header">
         <div>
@@ -918,9 +931,10 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
         <div class="config-row">
           <label>URL do Google Apps Script</label>
           <input class="config-input" type="text" id="cfgScriptUrl"
-            placeholder="https://script.google.com/macros/s/SEU_ID/exec">
+            placeholder="https://script.google.com/macros/s/.../exec">
           <div class="config-hint">
-            Cole aqui o mesmo APPS_SCRIPT_URL usado no formulário de cancelamento.<br>
+            URL atual ativa padrão:<br>
+            <code>https://script.google.com/macros/s/AKfycbyM7voLH-3IrORrepo5XRnWSjZDXS58dTJnpjkNS7pQzGhrvUIx6E8Hj5-furaEbipgEg/exec</code><br><br>
             O script precisa aceitar GET com <code>?action=getDados</code> e retornar JSON com os registros.
           </div>
         </div>
@@ -929,7 +943,7 @@ tbody tr:hover{background:rgba(0,212,255,.04);}
           <select class="config-input" id="cfgAutoRefresh" style="font-family:'Rajdhani',sans-serif;font-size:.85rem;">
             <option value="0">Desativada</option>
             <option value="60" selected>A cada 1 minuto</option>
-            <option value="300">A cada 5 minutos</option>
+            <option value="300">A cada 5 minutes</option>
             <option value="600">A cada 10 minutos</option>
           </select>
         </div>
@@ -971,12 +985,9 @@ function doGet(e) {
       </div>
     </section>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-
-<script>
+  </div></div><script>
 // ── CONFIG ────────────────────────────────────────────────────────
-let SCRIPT_URL = localStorage.getItem('vegas_script_url') || 'https://script.google.com/macros/s/AKfycbwD6lnaGydwBPuBEcuj1tsx1U0jfO3IQkAypei3_9T8OGbGYW0iovtp2CZsO29McFagjA/exec';
+let SCRIPT_URL = localStorage.getItem('vegas_script_url') || 'https://script.google.com/macros/s/AKfycbxOjhCCZeek7hBFAOzxo2VtWAaRm4gfDs8GdNooqViBPc9g-td2Kot6PkrRpG2EAATz6w/exec';
 let AUTO_REFRESH_SEC = parseInt(localStorage.getItem('vegas_auto_refresh') || '60');
 let autoRefreshTimer = null;
 
@@ -1099,7 +1110,6 @@ function fetchViaJsonp(url) {
 }
 
 function normalizar(r){
-  // Suporta tanto chaves do doPost (snake_case) quanto cabeçalhos da planilha
   return {
     protocolo : String(r.protocolo  || r['Protocolo']  || ''),
     nome      : String(r.nome       || r['Nome']       || ''),
@@ -1110,7 +1120,8 @@ function normalizar(r){
     motivos   : String(r.motivos    || r['Motivos']    || ''),
     descricao : String(r.descricao  || r['Descrição']  || r['Descricao'] || ''),
     decisao   : String(r.decisao    || r['Decisão']    || r['Decisao']   || r['Status'] || ''),
-    data_hora : String(r.data_hora  || r['Data/Hora']  || r['data']      || ''),
+    data_hora  : formatData(String(r.data_hora  || r['Data/Hora']  || r['data'] || '')),
+    respondido : String(r.respondido || r['Respondido'] || r['Status'] || ''),
   };
 }
 
@@ -1136,12 +1147,20 @@ function filtrarPorDias(data, dias){
 
 function parseData(str){
   if(!str) return null;
-  // formato pt-BR: DD/MM/YYYY HH:MM:SS ou DD/MM/YYYY, HH:MM
-  const m = str.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if(m) return new Date(`${m[3]}-${m[2]}-${m[1]}`);
+  if(/^\d{4}-\d{2}-\d{2}T/.test(str)) return new Date(str);
+  const m = str.match(/(\d{2})\/(\d{2})\/(\d{4})(?:[, ]+(\d{2}:\d{2}))?/);
+  if(m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]||'00:00'}:00`);
   const d = new Date(str);
   return isNaN(d) ? null : d;
 }
+
+function formatData(str){
+  const d = parseData(str);
+  if(!d) return str || '—';
+  const pad = n => String(n).padStart(2,'0');
+  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 
 function processar(){
   const dias = getDiasCortado();
@@ -1180,9 +1199,7 @@ function renderKPIs(data){
   set('kpiNota', mediaNota);
   set('kpiPendentes', pendentes);
 
-  // delta taxa: compara metade anterior
   const metade = Math.floor(data.length/2);
-  const recente = data.slice(0, metade);
   const anterior = data.slice(metade);
   if(anterior.length){
     const taxaAnt = Math.round(anterior.filter(r=>r.decisao.toLowerCase().includes('proposta')).length/anterior.length*100);
@@ -1220,7 +1237,6 @@ const chartDefaults = {
 
 // ── VOLUME LINE ───────────────────────────────────────────────────
 function renderChartVolume(data){
-  // agrupa por dia
   const map = {};
   data.forEach(r => {
     const d = parseData(r.data_hora);
@@ -1231,7 +1247,6 @@ function renderChartVolume(data){
     else map[key].c++;
   });
 
-  // últimos N dias
   const dias = getDiasCortado() || 30;
   const labels = [];
   const cancel = [];
@@ -1369,7 +1384,7 @@ function renderTabela(){
 
   const tbody = document.getElementById('tabelaBody');
   if(!slice.length){
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
   } else {
     tbody.innerHTML = slice.map((r, i) => {
       const isProp = r.decisao.toLowerCase().includes('proposta');
@@ -1379,6 +1394,10 @@ function renderTabela(){
       const desc = (r.descricao||'').trim();
       const descPreview = desc.length > 50 ? desc.slice(0,50) + '...' : desc;
       const rowId = 'detail-' + i;
+      const jaRespondido = (r.respondido||'').toLowerCase().includes('respondido');
+      const btnHtml = jaRespondido
+        ? `<span class="tag-respondido">✅ Respondido</span>`
+        : `<button class="btn-respondido" onclick="event.stopPropagation();marcarRespondido('${r.protocolo}',this)">📩 Marcar</button>`;
       return `<tr onclick="toggleDetail('${rowId}')" style="cursor:pointer;">
         <td><span class="proto-tag">${r.protocolo}</span></td>
         <td>${r.nome}</td>
@@ -1388,9 +1407,10 @@ function renderTabela(){
         <td>${r.data_hora}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;color:var(--muted)">${motStr}</td>
         <td class="desc-cell ${!desc ? 'empty' : ''}" title="${desc.replace(/"/g,'&quot;')}">${descPreview || 'sem descrição'}</td>
+        <td>${btnHtml}</td>
       </tr>
       <tr id="${rowId}" class="row-detail">
-        <td colspan="8">
+        <td colspan="10">
           <div class="detail-label">📝 Descrição Completa — ${r.protocolo} · ${r.nome}</div>
           <div class="detail-text">${desc || '<em style="color:var(--muted)">Nenhuma descrição informada pelo cliente.</em>'}</div>
           ${r.motivos && r.motivos !== 'Não informado' ? '<div class="detail-label" style="margin-top:10px">📋 Motivos</div><div class="detail-text">' + r.motivos + '</div>' : ''}
@@ -1410,10 +1430,62 @@ function toggleDetail(id){
   row.classList.toggle('open');
 }
 
+// ── SORT TABLE ──
 function sortTable(key){
   if(sortKey === key) sortDir *= -1;
   else { sortKey = key; sortDir = -1; }
   renderTabela();
+}
+
+// ── MARCAR RESPONDIDO ─────────────────────────────────────────────
+function marcarRespondido(protocolo, btn){
+  btn.disabled = true;
+  btn.textContent = '⏳ Salvando...';
+  btn.style.color = 'var(--amber)';
+  btn.style.borderColor = 'rgba(255,179,0,.3)';
+
+  const url = SCRIPT_URL + '?action=marcarRespondido&protocolo=' + encodeURIComponent(protocolo);
+  const cbName = '__vegas_resp_' + Date.now();
+  const script = document.createElement('script');
+  const timeout = setTimeout(() => {
+    script.remove();
+    btn.textContent = '❌ Erro';
+    btn.style.color = 'var(--red)';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '📩 Marcar';
+      btn.style.color = 'var(--cyan)';
+      btn.style.borderColor = 'rgba(0,212,255,.3)';
+    }, 2000);
+  }, 10000);
+
+  window[cbName] = function(res){
+    clearTimeout(timeout);
+    script.remove();
+    delete window[cbName];
+    if(res && res.ok){
+      btn.textContent = '✅ Respondido';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'rgba(0,255,178,.3)';
+      btn.style.background = 'rgba(0,255,178,.08)';
+      const item = allData.find(r => r.protocolo === protocolo);
+      if(item) item.respondido = 'Respondido';
+    } else {
+      btn.disabled = false;
+      btn.textContent = '❌ Erro';
+      btn.style.color = 'var(--red)';
+      setTimeout(() => {
+        btn.textContent = '📩 Marcar';
+        btn.style.color = 'var(--cyan)';
+        btn.style.borderColor = 'rgba(0,212,255,.3)';
+        btn.disabled = false;
+      }, 2000);
+    }
+  };
+
+  script.src = url + '&callback=' + cbName;
+  script.onerror = () => { clearTimeout(timeout); window[cbName]({ok:false}); };
+  document.head.appendChild(script);
 }
 
 function renderPaginacao(pages){
@@ -1429,7 +1501,6 @@ function goPage(p){ currentPage = p; renderTabela(); }
 
 // ── ANÁLISE ───────────────────────────────────────────────────────
 function renderAnalise(){
-  // Tendência mensal
   const mapMes = {};
   allData.forEach(r => {
     const d = parseData(r.data_hora);
@@ -1464,7 +1535,6 @@ function renderAnalise(){
     }
   });
 
-  // Dia da semana
   const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const mapDia = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
   allData.forEach(r => {
@@ -1491,7 +1561,6 @@ function renderAnalise(){
     }
   });
 
-  // Nota x Decisão
   const notaMap = {'Muito Satisfeito':5,'Satisfeito':4,'Regular':3,'Insatisfeito':2,'Muito Insatisfeito':1};
   const labelsNota = ['1','2','3','4','5'];
   const retPorNota = [0,0,0,0,0];
@@ -1521,7 +1590,6 @@ function renderAnalise(){
     }
   });
 
-  // Combinações de motivos
   const combMap = {};
   allData.forEach(r => {
     const ms = (r.motivos||'').split(',').map(m=>m.trim()).filter(Boolean);
