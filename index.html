@@ -1,965 +1,1605 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vegas_Dashboard_SAC</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vegas_Dashboard_SAC</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --cyan:#00d4ff;
-  --purple:#7b61ff;
-  --green:#00ffb2;
-  --red:#ff2d55;
-  --amber:#ffb300;
-  --bg:#050816;
-  --bg2:#080d1e;
-  --bg3:#0d1526;
-  --card:rgba(13,21,38,0.95);
-  --border:rgba(0,212,255,0.15);
-  --border-h:rgba(0,212,255,0.35);
-  --text:#e2e8f0;
-  --muted:rgba(185,197,212,0.55);
-  --sidebar:220px;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-html{scroll-behavior:smooth;}
-body{
-  font-family:'Rajdhani',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  overflow-x:hidden;
-}
+    :root {
+      --cyan: #00d4ff;
+      --purple: #7b61ff;
+      --green: #00ffb2;
+      --red: #ff2d55;
+      --amber: #ffb300;
+      --bg: #050816;
+      --bg2: #080d1e;
+      --bg3: #0d1526;
+      --card: rgba(13, 21, 38, 0.95);
+      --border: rgba(0, 212, 255, 0.15);
+      --border-h: rgba(0, 212, 255, 0.35);
+      --text: #e2e8f0;
+      --muted: rgba(185, 197, 212, 0.55);
+      --sidebar: 220px;
+    }
 
-/* ── BACKGROUND ── */
-body::before{
-  content:'';
-  position:fixed;inset:0;z-index:-2;
-  background:
-    radial-gradient(ellipse 70% 60% at 10% 10%, rgba(0,212,255,.06), transparent),
-    radial-gradient(ellipse 60% 50% at 90% 20%, rgba(123,97,255,.07), transparent),
-    radial-gradient(ellipse 40% 50% at 60% 90%, rgba(0,255,178,.04), transparent),
-    var(--bg);
-}
-body::after{
-  content:'';
-  position:fixed;inset:0;z-index:-1;
-  background-image:
-    linear-gradient(rgba(0,212,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,.025) 1px, transparent 1px);
-  background-size:48px 48px;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* ── SIDEBAR ── */
-.sidebar{
-  width:var(--sidebar);
-  min-height:100vh;
-  background:var(--bg2);
-  border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  position:fixed;
-  left:0;top:0;bottom:0;
-  z-index:100;
-  transition:.3s;
-}
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
 
-.sidebar-logo{
-  padding:24px 20px 20px;
-  border-bottom:1px solid var(--border);
-}
-.sidebar-logo .brand{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.1rem;
-  font-weight:900;
-  background:linear-gradient(135deg,#fff,var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  letter-spacing:2px;
-}
-.sidebar-logo .brand-sub{
-  font-size:.65rem;
-  letter-spacing:3px;
-  color:rgba(0,212,255,.5);
-  margin-top:2px;
-  text-transform:uppercase;
-}
-.sidebar-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  background:rgba(0,255,178,.08);border:1px solid rgba(0,255,178,.2);
-  border-radius:20px;padding:3px 10px;margin-top:10px;
-  font-size:.65rem;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;
-}
-.badge-dot{width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);animation:blink 1.5s ease infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+    /* ── BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 70% 60% at 10% 10%, rgba(0, 212, 255, .06), transparent),
+        radial-gradient(ellipse 60% 50% at 90% 20%, rgba(123, 97, 255, .07), transparent),
+        radial-gradient(ellipse 40% 50% at 60% 90%, rgba(0, 255, 178, .04), transparent),
+        var(--bg);
+    }
 
-.sidebar-nav{
-  flex:1;
-  padding:16px 0;
-  overflow-y:auto;
-}
-.nav-section{
-  padding:6px 16px 4px;
-  font-size:.62rem;
-  letter-spacing:2px;
-  color:var(--muted);
-  text-transform:uppercase;
-  margin-top:8px;
-}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 20px;
-  cursor:pointer;
-  transition:.2s;
-  border-left:2px solid transparent;
-  font-size:.88rem;
-  font-weight:500;
-  color:var(--muted);
-  user-select:none;
-}
-.nav-item:hover{background:rgba(0,212,255,.05);color:var(--text);border-left-color:rgba(0,212,255,.3);}
-.nav-item.active{background:rgba(0,212,255,.08);color:var(--cyan);border-left-color:var(--cyan);}
-.nav-item .ico{font-size:1rem;width:20px;text-align:center;}
-.nav-item .badge-count{
-  margin-left:auto;
-  background:rgba(255,45,85,.15);border:1px solid rgba(255,45,85,.3);
-  color:var(--red);font-size:.65rem;font-weight:700;
-  padding:1px 7px;border-radius:20px;
-}
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, .025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
 
-.sidebar-footer{
-  padding:16px 20px;
-  border-top:1px solid var(--border);
-}
-.sidebar-user{
-  display:flex;align-items:center;gap:10px;
-}
-.user-avatar{
-  width:34px;height:34px;border-radius:50%;
-  background:linear-gradient(135deg,var(--cyan),var(--purple));
-  display:flex;align-items:center;justify-content:center;
-  font-size:.85rem;font-weight:700;color:#000;flex-shrink:0;
-}
-.user-name{font-size:.85rem;font-weight:600;color:var(--text);}
-.user-role{font-size:.7rem;color:var(--muted);}
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar);
+      min-height: 100vh;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      transition: .3s;
+    }
 
-/* ── MAIN ── */
-.main{
-  margin-left:var(--sidebar);
-  flex:1;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
 
-/* ── TOPBAR ── */
-.topbar{
-  height:60px;
-  background:rgba(8,13,30,.9);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 28px;
-  gap:16px;
-  position:sticky;top:0;z-index:50;
-}
-.topbar-title{
-  font-family:'Orbitron',sans-serif;
-  font-size:.85rem;font-weight:700;
-  color:var(--cyan);letter-spacing:1px;
-  flex:1;
-}
-.topbar-actions{display:flex;align-items:center;gap:12px;}
-.topbar-time{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.78rem;color:var(--muted);
-  background:rgba(0,212,255,.05);
-  border:1px solid var(--border);
-  border-radius:8px;padding:5px 12px;
-}
-.topbar-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 14px;border-radius:8px;
-  border:1px solid var(--border);
-  background:rgba(0,212,255,.06);
-  color:var(--cyan);font-size:.78rem;font-weight:600;
-  cursor:pointer;transition:.2s;font-family:'Rajdhani',sans-serif;
-}
-.topbar-btn:hover{background:rgba(0,212,255,.12);border-color:var(--border-h);}
-.refresh-spin{display:inline-block;transition:.3s;}
-.refreshing .refresh-spin{animation:spin .6s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+    .sidebar-logo .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
 
-.status-pill{
-  display:flex;align-items:center;gap:6px;
-  font-size:.72rem;color:var(--muted);
-  padding:5px 12px;border-radius:8px;
-  border:1px solid var(--border);
-  background:rgba(0,0,0,.2);
-}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
-.status-dot.offline{background:var(--red);box-shadow:0 0 8px var(--red);}
-.status-dot.loading{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:blink .8s ease infinite;}
+    .sidebar-logo .brand-sub {
+      font-size: .65rem;
+      letter-spacing: 3px;
+      color: rgba(0, 212, 255, .5);
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
 
-/* ── CONTENT ── */
-.content{
-  padding:28px;
-  flex:1;
-}
+    .sidebar-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(0, 255, 178, .08);
+      border: 1px solid rgba(0, 255, 178, .2);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-top: 10px;
+      font-size: .65rem;
+      letter-spacing: 1.5px;
+      color: var(--green);
+      text-transform: uppercase;
+    }
 
-/* ── SECTION ── */
-.section{display:none;}
-.section.active{display:block;}
+    .badge-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 1.5s ease infinite;
+    }
 
-/* ── PAGE HEADER ── */
-.page-header{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:28px;
-  flex-wrap:wrap;gap:16px;
-}
-.page-header h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.3rem;font-weight:700;
-  color:#fff;letter-spacing:1px;
-}
-.page-header p{
-  font-size:.9rem;color:var(--muted);margin-top:5px;
-}
-.page-header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    @keyframes blink {
 
-.filter-select{
-  padding:7px 14px;border-radius:8px;
-  border:1px solid var(--border);
-  background:rgba(0,212,255,.05);
-  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.85rem;
-  cursor:pointer;outline:none;
-}
-.filter-select option{background:var(--bg3);}
+      0%,
+      100% {
+        opacity: 1;
+      }
 
-/* ── KPI GRID ── */
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:16px;
-  margin-bottom:24px;
-}
-.kpi-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:20px;
-  position:relative;
-  overflow:hidden;
-  transition:.3s;
-  cursor:default;
-}
-.kpi-card::before{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,212,255,.03),transparent);
-  opacity:0;transition:.3s;
-}
-.kpi-card:hover{border-color:var(--border-h);box-shadow:0 0 30px rgba(0,212,255,.08);}
-.kpi-card:hover::before{opacity:1;}
-.kpi-accent{
-  position:absolute;top:0;left:0;right:0;height:2px;
-  border-radius:16px 16px 0 0;
-}
-.accent-cyan{background:linear-gradient(90deg,var(--cyan),transparent);}
-.accent-purple{background:linear-gradient(90deg,var(--purple),transparent);}
-.accent-green{background:linear-gradient(90deg,var(--green),transparent);}
-.accent-red{background:linear-gradient(90deg,var(--red),transparent);}
-.accent-amber{background:linear-gradient(90deg,var(--amber),transparent);}
+      50% {
+        opacity: .2;
+      }
+    }
 
-.kpi-label{
-  font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--muted);font-weight:600;margin-bottom:10px;
-}
-.kpi-value{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.8rem;font-weight:700;
-  color:#fff;line-height:1;
-}
-.kpi-value.cyan{color:var(--cyan);}
-.kpi-value.green{color:var(--green);}
-.kpi-value.red{color:var(--red);}
-.kpi-value.amber{color:var(--amber);}
-.kpi-delta{
-  display:inline-flex;align-items:center;gap:4px;
-  margin-top:8px;font-size:.78rem;font-weight:600;
-}
-.kpi-delta.up{color:var(--green);}
-.kpi-delta.down{color:var(--red);}
-.kpi-delta.neutral{color:var(--muted);}
-.kpi-sub{font-size:.75rem;color:var(--muted);margin-top:4px;}
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 0;
+      overflow-y: auto;
+    }
 
-/* ── CHARTS GRID ── */
-.charts-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-bottom:24px;
-}
-.charts-grid.triple{grid-template-columns:2fr 1fr;}
-.chart-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:22px;
-  transition:.3s;
-}
-.chart-card:hover{border-color:var(--border-h);}
-.chart-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:20px;
-}
-.chart-title{
-  font-family:'Orbitron',sans-serif;
-  font-size:.78rem;font-weight:700;
-  color:var(--cyan);letter-spacing:1px;
-}
-.chart-subtitle{font-size:.78rem;color:var(--muted);margin-top:3px;}
-.chart-legend{
-  display:flex;gap:14px;flex-wrap:wrap;
-}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);}
-.legend-dot{width:8px;height:8px;border-radius:50%;}
-canvas{max-height:230px;}
+    .nav-section {
+      padding: 6px 16px 4px;
+      font-size: .62rem;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
 
-/* ── TABLE ── */
-.table-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  overflow:hidden;
-  margin-bottom:24px;
-}
-.table-top{
-  padding:18px 22px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;flex-wrap:wrap;
-}
-.table-top-title{
-  font-family:'Orbitron',sans-serif;
-  font-size:.78rem;font-weight:700;color:var(--cyan);letter-spacing:1px;
-}
-.table-search{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(0,0,0,.25);
-  border:1px solid var(--border);
-  border-radius:8px;padding:6px 14px;
-  font-size:.82rem;color:var(--text);
-}
-.table-search input{
-  background:none;border:none;outline:none;
-  color:var(--text);font-family:'Rajdhani',sans-serif;
-  font-size:.85rem;width:180px;
-}
-.table-search input::placeholder{color:var(--muted);}
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: .2s;
+      border-left: 2px solid transparent;
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--muted);
+      user-select: none;
+    }
 
-.tbl-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;}
-thead tr{background:rgba(0,212,255,.05);border-bottom:1px solid var(--border);}
-th{
-  padding:11px 18px;
-  font-size:.68rem;font-weight:700;
-  letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--muted);text-align:left;white-space:nowrap;
-  cursor:pointer;user-select:none;
-}
-th:hover{color:var(--cyan);}
-td{
-  padding:12px 18px;
-  font-size:.88rem;
-  border-bottom:1px solid rgba(0,212,255,.06);
-  color:var(--text);
-  white-space:nowrap;
-}
-tr:last-child td{border-bottom:none;}
-tbody tr{transition:.2s;}
-tbody tr:hover{background:rgba(0,212,255,.04);}
+    .nav-item:hover {
+      background: rgba(0, 212, 255, .05);
+      color: var(--text);
+      border-left-color: rgba(0, 212, 255, .3);
+    }
 
-.proto-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.75rem;
-  color:var(--cyan);
-  background:rgba(0,212,255,.08);
-  border:1px solid rgba(0,212,255,.2);
-  border-radius:6px;padding:2px 8px;
-}
-.status-tag{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:.72rem;font-weight:700;
-  padding:3px 10px;border-radius:20px;
-  text-transform:uppercase;letter-spacing:.5px;
-}
-.tag-proposta{background:rgba(0,255,178,.1);border:1px solid rgba(0,255,178,.25);color:var(--green);}
-.tag-cancelamento{background:rgba(255,45,85,.1);border:1px solid rgba(255,45,85,.25);color:var(--red);}
-.tag-pendente{background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.25);color:var(--amber);}
+    .nav-item.active {
+      background: rgba(0, 212, 255, .08);
+      color: var(--cyan);
+      border-left-color: var(--cyan);
+    }
 
-.table-pagination{
-  padding:14px 22px;
-  border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  font-size:.8rem;color:var(--muted);
-}
-.pag-btns{display:flex;gap:6px;}
-.pag-btn{
-  padding:5px 12px;border-radius:6px;
-  border:1px solid var(--border);
-  background:rgba(0,212,255,.04);
-  color:var(--text);font-size:.78rem;
-  cursor:pointer;transition:.2s;font-family:'Rajdhani',sans-serif;
-}
-.pag-btn:hover{background:rgba(0,212,255,.1);border-color:var(--border-h);color:var(--cyan);}
-.pag-btn.active{background:rgba(0,212,255,.15);border-color:var(--cyan);color:var(--cyan);}
-.pag-btn:disabled{opacity:.35;cursor:not-allowed;}
+    .nav-item .ico {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+    }
 
-/* ── MOTIVOS RANKING ── */
-.motivos-list{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
-.motivo-item{display:flex;align-items:center;gap:12px;}
-.motivo-label{font-size:.82rem;color:var(--text);min-width:180px;flex-shrink:0;}
-.motivo-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;}
-.motivo-bar{height:100%;border-radius:8px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.motivo-count覆{font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:30px;text-align:right;}
+    .nav-item .badge-count {
+      margin-left: auto;
+      background: rgba(255, 45, 85, .15);
+      border: 1px solid rgba(255, 45, 85, .3);
+      color: var(--red);
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 20px;
+    }
 
-/* ── ALERTS ── */
-.alerts-list{display:flex;flex-direction:column;gap:10px;}
-.alert-item{
-  display:flex;align-items:flex-start;gap:14px;
-  padding:14px 18px;border-radius:12px;
-  border:1px solid;
-}
-.alert-item.red{background:rgba(255,45,85,.06);border-color:rgba(255,45,85,.2);}
-.alert-item.amber{background:rgba(255,179,0,.06);border-color:rgba(255,179,0,.2);}
-.alert-item.green{background:rgba(0,255,178,.06);border-color:rgba(0,255,178,.2);}
-.alert-ico{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
-.alert-text{font-size:.85rem;color:var(--text);line-height:1.5;}
-.alert-time{font-size:.72rem;color:var(--muted);margin-top:2px;}
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
 
-/* ── LOADING STATE ── */
-.loading-overlay{
-  display:none;
-  position:fixed;inset:0;z-index:500;
-  background:rgba(5,8,22,.85);
-  backdrop-filter:blur(8px);
-  align-items:center;justify-content:center;
-  flex-direction:column;gap:16px;
-}
-.loading-overlay.show{display:flex;}
-.loader-ring{
-  width:56px;height:56px;border-radius:50%;
-  border:3px solid rgba(0,212,255,.15);
-  border-top-color:var(--cyan);
-  animation:spin .8s linear infinite;
-}
-.loader-text{font-family:'Orbitron',sans-serif;font-size:.78rem;color:var(--cyan);letter-spacing:2px;}
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-/* ── EMPTY STATE ── */
-.empty-state{
-  text-align:center;padding:60px 20px;
-  color:var(--muted);
-}
-.empty-state .e-ico{font-size:2.5rem;margin-bottom:12px;}
-.empty-state p{font-size:.9rem;}
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+    }
 
-/* ── CONFIG CARD ── */
-.config-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:28px;
-  margin-bottom:20px;
-}
-.config-card h3{
-  font-family:'Orbitron',sans-serif;
-  font-size:.82rem;color:var(--cyan);
-  letter-spacing:1px;margin-bottom:20px;
-  padding-bottom:12px;
-  border-bottom:1px solid var(--border);
-}
-.config-row{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
-.config-row label{font-size:.78rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.config-input{
-  padding:11px 16px;border-radius:10px;
-  border:1px solid var(--border);
-  background:rgba(0,0,0,.3);
-  color:var(--text);font-family:'JetBrains Mono',monospace;
-  font-size:.82rem;outline:none;transition:.3s;width:100%;
-}
-.config-input:focus{border-color:var(--cyan);background:rgba(0,212,255,.05);}
-.config-hint{font-size:.72rem;color:var(--muted);margin-top:4px;line-height:1.5;}
-.btn-save{
-  padding:11px 28px;border:none;border-radius:10px;
-  background:linear-gradient(135deg,var(--cyan),rgba(0,150,200,1));
-  color:#000;font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:700;
-  letter-spacing:1.5px;cursor:pointer;transition:.3s;text-transform:uppercase;
-}
-.btn-save:hover{box-shadow:0 0 30px rgba(0,212,255,.4);transform:translateY(-2px);}
+    .user-name {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
 
-/* ── RESPONSIVO ── */
-@media(max-width:900px){
-  :root{--sidebar:0px;}
-  .sidebar{transform:translateX(-220px);width:220px;}
-  .sidebar.open{transform:none;}
-  .main{margin-left:0;}
-  .charts-grid{grid-template-columns:1fr;}
-  .charts-grid.triple{grid-template-columns:1fr;}
-  .kpi-grid{grid-template-columns:repeat(2,1fr);}
-  .topbar{padding:0 16px;}
-}
-@media(max-width:540px){
-  .kpi-grid{grid-template-columns:1fr;}
-  .content{padding:16px;}
-}
+    .user-role {
+      font-size: .7rem;
+      color: var(--muted);
+    }
 
-/* ── BOTÃO MARCAR RESPONDIDO ── */
-.btn-respondido{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:4px 12px;border-radius:6px;
-  border:1px solid rgba(0,212,255,.3);
-  background:rgba(0,212,255,.06);
-  color:var(--cyan);font-size:.75rem;font-weight:600;
-  cursor:pointer;transition:.2s;
-  font-family:'Rajdhani',sans-serif;white-space:nowrap;
-}
-.btn-respondido:hover:not(:disabled){
-  background:rgba(0,212,255,.15);border-color:var(--cyan);
-}
-.btn-respondido:disabled{opacity:.6;cursor:not-allowed;}
-.btn-respondido.done{
-  background:rgba(0,255,178,.08);border-color:rgba(0,255,178,.3);
-  color:var(--green);cursor:default;
-}
-.tag-respondido{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:.72rem;font-weight:700;
-  padding:3px 10px;border-radius:20px;
-  background:rgba(0,255,178,.1);border:1px solid rgba(0,255,178,.25);
-  color:var(--green);text-transform:uppercase;letter-spacing:.5px;
-}
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar);
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* ── DESCRIÇÃO EXPANDÍVEL ── */
-.desc-cell{
-  max-width:220px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  color:var(--muted);cursor:pointer;transition:.2s;
-}
-.desc-cell:hover{color:var(--cyan);}
-.desc-cell.empty{color:rgba(185,197,212,.25);font-style:italic;}
-.row-detail{
-  display:none;
-  background:rgba(0,212,255,.04);
-  border-left:3px solid var(--cyan);
-}
-.row-detail.open{display:table-row;}
-.row-detail td{
-  padding:12px 18px 16px 24px;
-  color:var(--text);font-size:.85rem;line-height:1.6;
-  white-space:normal;
-}
-.detail-label{
-  font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--muted);margin-bottom:4px;font-weight:600;
-}
-.detail-text{color:var(--text);}
-</style>
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 60px;
+      background: rgba(8, 13, 30, .9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      flex: 1;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      color: var(--muted);
+      background: rgba(0, 212, 255, .05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+    }
+
+    .topbar-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(0, 212, 255, .06);
+      color: var(--cyan);
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .topbar-btn:hover {
+      background: rgba(0, 212, 255, .12);
+      border-color: var(--border-h);
+    }
+
+    .refresh-spin {
+      display: inline-block;
+      transition: .3s;
+    }
+
+    .refreshing .refresh-spin {
+      animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+      color: var(--muted);
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, .2);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .status-dot.offline {
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+    }
+
+    .status-dot.loading {
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
+      animation: blink .8s ease infinite;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      padding: 28px;
+      flex: 1;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .page-header p {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .page-header-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(0, 212, 255, .05);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select option {
+      background: var(--bg3);
+    }
+
+    /* ── KPI GRID ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: .3s;
+      cursor: default;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 255, .03), transparent);
+      opacity: 0;
+      transition: .3s;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--border-h);
+      box-shadow: 0 0 30px rgba(0, 212, 255, .08);
+    }
+
+    .kpi-card:hover::before {
+      opacity: 1;
+    }
+
+    .kpi-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .accent-cyan {
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+
+    .accent-purple {
+      background: linear-gradient(90deg, var(--purple), transparent);
+    }
+
+    .accent-green {
+      background: linear-gradient(90deg, var(--green), transparent);
+    }
+
+    .accent-red {
+      background: linear-gradient(90deg, var(--red), transparent);
+    }
+
+    .accent-amber {
+      background: linear-gradient(90deg, var(--amber), transparent);
+    }
+
+    .kpi-label {
+      font-size: .72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .kpi-value.cyan {
+      color: var(--cyan);
+    }
+
+    .kpi-value.green {
+      color: var(--green);
+    }
+
+    .kpi-value.red {
+      color: var(--red);
+    }
+
+    .kpi-value.amber {
+      color: var(--amber);
+    }
+
+    .kpi-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    .kpi-delta.up {
+      color: var(--green);
+    }
+
+    .kpi-delta.down {
+      color: var(--red);
+    }
+
+    .kpi-delta.neutral {
+      color: var(--muted);
+    }
+
+    .kpi-sub {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── CHARTS GRID ── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .charts-grid.triple {
+      grid-template-columns: 2fr 1fr;
+    }
+
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      transition: .3s;
+    }
+
+    .chart-card:hover {
+      border-color: var(--border-h);
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1px;
+    }
+
+    .chart-subtitle {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .72rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    canvas {
+      max-height: 230px;
+    }
+
+    /* ── TABLE ── */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .table-top {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .table-top-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1px;
+    }
+
+    .table-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, .25);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: .82rem;
+      color: var(--text);
+    }
+
+    .table-search input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .85rem;
+      width: 180px;
+    }
+
+    .table-search input::placeholder {
+      color: var(--muted);
+    }
+
+    .tbl-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: rgba(0, 212, 255, .05);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 11px 18px;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th:hover {
+      color: var(--cyan);
+    }
+
+    td {
+      padding: 12px 18px;
+      font-size: .88rem;
+      border-bottom: 1px solid rgba(0, 212, 255, .06);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: .2s;
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 212, 255, .04);
+    }
+
+    .proto-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      color: var(--cyan);
+      background: rgba(0, 212, 255, .08);
+      border: 1px solid rgba(0, 212, 255, .2);
+      border-radius: 6px;
+      padding: 2px 8px;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .tag-proposta {
+      background: rgba(0, 255, 178, .1);
+      border: 1px solid rgba(0, 255, 178, .25);
+      color: var(--green);
+    }
+
+    .tag-cancelamento {
+      background: rgba(255, 45, 85, .1);
+      border: 1px solid rgba(255, 45, 85, .25);
+      color: var(--red);
+    }
+
+    .tag-pendente {
+      background: rgba(255, 179, 0, .1);
+      border: 1px solid rgba(255, 179, 0, .25);
+      color: var(--amber);
+    }
+
+    .table-pagination {
+      padding: 14px 22px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .pag-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .pag-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(0, 212, 255, .04);
+      color: var(--text);
+      font-size: .78rem;
+      cursor: pointer;
+      transition: .2s;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .pag-btn:hover {
+      background: rgba(0, 212, 255, .1);
+      border-color: var(--border-h);
+      color: var(--cyan);
+    }
+
+    .pag-btn.active {
+      background: rgba(0, 212, 255, .15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .pag-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    /* ── MOTIVOS RANKING ── */
+    .motivos-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .motivo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .motivo-label {
+      font-size: .82rem;
+      color: var(--text);
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+
+    .motivo-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, .06);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .motivo-bar {
+      height: 100%;
+      border-radius: 8px;
+      transition: width .8s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .motivo-count覆 {
+      font-size: .78rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 30px;
+      text-align: right;
+    }
+
+    /* ── ALERTS ── */
+    .alerts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid;
+    }
+
+    .alert-item.red {
+      background: rgba(255, 45, 85, .06);
+      border-color: rgba(255, 45, 85, .2);
+    }
+
+    .alert-item.amber {
+      background: rgba(255, 179, 0, .06);
+      border-color: rgba(255, 179, 0, .2);
+    }
+
+    .alert-item.green {
+      background: rgba(0, 255, 178, .06);
+      border-color: rgba(0, 255, 178, .2);
+    }
+
+    .alert-ico {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .alert-text {
+      font-size: .85rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .alert-time {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── LOADING STATE ── */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(5, 8, 22, .85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loader-ring {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid rgba(0, 212, 255, .15);
+      border-top-color: var(--cyan);
+      animation: spin .8s linear infinite;
+    }
+
+    .loader-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .78rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state .e-ico {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: .9rem;
+    }
+
+    /* ── CONFIG CARD ── */
+    .config-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .config-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .82rem;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .config-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .config-row label {
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .config-input {
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, .3);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      outline: none;
+      transition: .3s;
+      width: 100%;
+    }
+
+    .config-input:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 212, 255, .05);
+    }
+
+    .config-hint {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .btn-save {
+      padding: 11px 28px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), rgba(0, 150, 200, 1));
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: .3s;
+      text-transform: uppercase;
+    }
+
+    .btn-save:hover {
+      box-shadow: 0 0 30px rgba(0, 212, 255, .4);
+      transform: translateY(-2px);
+    }
+
+    /* ── RESPONSIVO ── */
+    @media(max-width:900px) {
+      :root {
+        --sidebar: 0px;
+      }
+
+      .sidebar {
+        transform: translateX(-220px);
+        width: 220px;
+      }
+
+      .sidebar.open {
+        transform: none;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid.triple {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+    }
+
+    @media(max-width:540px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 16px;
+      }
+    }
+
+    /* ── BOTÃO MARCAR RESPONDIDO ── */
+    .btn-respondido {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 212, 255, .3);
+      background: rgba(0, 212, 255, .06);
+      color: var(--cyan);
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+      font-family: 'Rajdhani', sans-serif;
+      white-space: nowrap;
+    }
+
+    .btn-respondido:hover:not(:disabled) {
+      background: rgba(0, 212, 255, .15);
+      border-color: var(--cyan);
+    }
+
+    .btn-respondido:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .btn-respondido.done {
+      background: rgba(0, 255, 178, .08);
+      border-color: rgba(0, 255, 178, .3);
+      color: var(--green);
+      cursor: default;
+    }
+
+    .tag-respondido {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(0, 255, 178, .1);
+      border: 1px solid rgba(0, 255, 178, .25);
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    /* ── DESCRIÇÃO EXPANDÍVEL ── */
+    .desc-cell {
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--muted);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .desc-cell:hover {
+      color: var(--cyan);
+    }
+
+    .desc-cell.empty {
+      color: rgba(185, 197, 212, .25);
+      font-style: italic;
+    }
+
+    .row-detail {
+      display: none;
+      background: rgba(0, 212, 255, .04);
+      border-left: 3px solid var(--cyan);
+    }
+
+    .row-detail.open {
+      display: table-row;
+    }
+
+    .row-detail td {
+      padding: 12px 18px 16px 24px;
+      color: var(--text);
+      font-size: .85rem;
+      line-height: 1.6;
+      white-space: normal;
+    }
+
+    .detail-label {
+      font-size: .68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .detail-text {
+      color: var(--text);
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loader-ring"></div>
-  <div class="loader-text">Carregando dados...</div>
-</div>
-
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <img src="./assets/logovegas.png" alt="Vegas" style="width:160px;display:block;margin:0 auto 8px;filter:brightness(0) invert(1);">
-    <div class="sidebar-badge" style="justify-content:center;">
-      <span class="badge-dot"></span>
-      Painel Interno
-    </div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader-ring"></div>
+    <div class="loader-text">Carregando dados...</div>
   </div>
 
-  <nav class="sidebar-nav">
-    <div class="nav-section">Principal</div>
-    <div class="nav-item active" onclick="setSection('overview')">
-      <span class="ico">📊</span> Visão Geral
-    </div>
-    <div class="nav-item" onclick="setSection('cancelamentos')">
-      <span class="ico">📋</span> Cancelamentos
-      <span class="badge-count" id="badgePendentes">0</span>
-    </div>
-    <div class="nav-item" onclick="setSection('analise')">
-      <span class="ico">📈</span> Análise
-    </div>
-
-    <div class="nav-section">Operações</div>
-    <div class="nav-item" onclick="setSection('retencao')">
-      <span class="ico">🎯</span> Retenção
-    </div>
-    <div class="nav-item" onclick="setSection('alertas')">
-      <span class="ico">🔔</span> Alertas
-    </div>
-
-    <div class="nav-section">Sistema</div>
-    <div class="nav-item" onclick="setSection('config')">
-      <span class="ico">⚙️</span> Configurações
-    </div>
-  </nav>
-
-  <div class="sidebar-footer">
-    <div class="sidebar-user">
-      <div class="user-avatar">V</div>
-      <div>
-        <div class="user-name">Vegas Admin</div>
-        <div class="user-role">Operações</div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="./assets/logovegas.png" alt="Vegas"
+        style="width:160px;display:block;margin:0 auto 8px;filter:brightness(0) invert(1);">
+      <div class="sidebar-badge" style="justify-content:center;">
+        <span class="badge-dot"></span>
+        Painel Interno
       </div>
     </div>
-  </div>
-</aside>
 
-<div class="main">
-
-  <div class="topbar">
-    <div class="topbar-title" id="topbarTitle">Visão Geral</div>
-    <div class="topbar-actions">
-      <div class="topbar-time" id="clockEl">--:--:--</div>
-      <div class="status-pill">
-        <div class="status-dot loading" id="statusDot"></div>
-        <span id="statusText">Conectando...</span>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" onclick="setSection('overview')">
+        <span class="ico">📊</span> Visão Geral
       </div>
-      <button class="topbar-btn" onclick="carregarDados()" id="btnRefresh">
-        <span class="refresh-spin" id="refreshIco">↻</span> Atualizar
-      </button>
-    </div>
-  </div>
+      <div class="nav-item" onclick="setSection('cancelamentos')">
+        <span class="ico">📋</span> Cancelamentos
+        <span class="badge-count" id="badgePendentes">0</span>
+      </div>
+      <div class="nav-item" onclick="setSection('analise')">
+        <span class="ico">📈</span> Análise
+      </div>
 
-  <div class="content">
+      <div class="nav-section">Operações</div>
+      <div class="nav-item" onclick="setSection('retencao')">
+        <span class="ico">🎯</span> Retenção
+      </div>
+      <div class="nav-item" onclick="setSection('alertas')">
+        <span class="ico">🔔</span> Alertas
+      </div>
 
-    <section class="section active" id="sec-overview">
-      <div class="page-header">
+      <div class="nav-section">Sistema</div>
+      <div class="nav-item" onclick="setSection('config')">
+        <span class="ico">⚙️</span> Configurações
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">V</div>
         <div>
-          <h1>Visão Geral</h1>
-          <p id="lastUpdateText">Última atualização: —</p>
-        </div>
-        <div class="page-header-right">
-          <select class="filter-select" id="filterPeriodo" onchange="aplicarFiltro()">
-            <option value="7">Últimos 7 dias</option>
-            <option value="30" selected>Últimos 30 dias</option>
-            <option value="90">Últimos 90 dias</option>
-            <option value="0">Todos</option>
-          </select>
+          <div class="user-name">Vegas Admin</div>
+          <div class="user-role">Operações</div>
         </div>
       </div>
+    </div>
+  </aside>
 
-      <div class="kpi-grid" id="kpiGrid">
-        <div class="kpi-card">
-          <div class="kpi-accent accent-cyan"></div>
-          <div class="kpi-label">Total de Solicitações</div>
-          <div class="kpi-value cyan" id="kpiTotal">—</div>
-          <div class="kpi-sub" id="kpiTotalSub">no período</div>
+  <div class="main">
+
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Visão Geral</div>
+      <div class="topbar-actions">
+        <div class="topbar-time" id="clockEl">--:--:--</div>
+        <div class="status-pill">
+          <div class="status-dot loading" id="statusDot"></div>
+          <span id="statusText">Conectando...</span>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-red"></div>
-          <div class="kpi-label">Cancelamentos</div>
-          <div class="kpi-value red" id="kpiCancelamentos">—</div>
-          <div class="kpi-sub" id="kpiCancelSub">confirmados</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-green"></div>
-          <div class="kpi-label">Retenções</div>
-          <div class="kpi-value green" id="kpiRetencoes">—</div>
-          <div class="kpi-sub">clientes recuperados</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-amber"></div>
-          <div class="kpi-label">Taxa de Retenção</div>
-          <div class="kpi-value amber" id="kpiTaxa">—</div>
-          <div class="kpi-delta neutral" id="kpiTaxaDelta"></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-purple"></div>
-          <div class="kpi-label">Nota Média</div>
-          <div class="kpi-value" style="color:var(--purple)" id="kpiNota">—</div>
-          <div class="kpi-sub">satisfação</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-amber"></div>
-          <div class="kpi-label">Aguardando Contato</div>
-          <div class="kpi-value amber" id="kpiPendentes">—</div>
-          <div class="kpi-sub">dentro de 48h</div>
-        </div>
+        <button class="topbar-btn" onclick="carregarDados()" id="btnRefresh">
+          <span class="refresh-spin" id="refreshIco">↻</span> Atualizar
+        </button>
       </div>
+    </div>
 
-      <div class="charts-grid">
-        <div class="chart-card">
+    <div class="content">
+
+      <section class="section active" id="sec-overview">
+        <div class="page-header">
+          <div>
+            <h1>Visão Geral</h1>
+            <p id="lastUpdateText">Última atualização: —</p>
+          </div>
+          <div class="page-header-right">
+            <select class="filter-select" id="filterPeriodo" onchange="aplicarFiltro()">
+              <option value="7">Últimos 7 dias</option>
+              <option value="30" selected>Últimos 30 dias</option>
+              <option value="90">Últimos 90 dias</option>
+              <option value="0">Todos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="kpiGrid">
+          <div class="kpi-card">
+            <div class="kpi-accent accent-cyan"></div>
+            <div class="kpi-label">Total de Solicitações</div>
+            <div class="kpi-value cyan" id="kpiTotal">—</div>
+            <div class="kpi-sub" id="kpiTotalSub">no período</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-purple"></div>
+            <div class="kpi-label">Net Promoter Score (NPS)</div>
+            <div class="kpi-value" style="color: var(--purple);" id="kpiNPS">—</div>
+            <div class="kpi-sub" id="kpiNpsZona">zona de avaliação</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-red"></div>
+            <div class="kpi-label">Cancelamentos</div>
+            <div class="kpi-value red" id="kpiCancelamentos">—</div>
+            <div class="kpi-sub" id="kpiCancelSub">confirmados</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-green"></div>
+            <div class="kpi-label">Retenções</div>
+            <div class="kpi-value green" id="kpiRetencoes">—</div>
+            <div class="kpi-sub">clientes recuperados</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-amber"></div>
+            <div class="kpi-label">Taxa de Retenção</div>
+            <div class="kpi-value amber" id="kpiTaxa">—</div>
+            <div class="kpi-delta neutral" id="kpiTaxaDelta"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-purple"></div>
+            <div class="kpi-label">Nota Média</div>
+            <div class="kpi-value" style="color:var(--purple)" id="kpiNota">—</div>
+            <div class="kpi-sub">satisfação</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-amber"></div>
+            <div class="kpi-label">Aguardando Contato</div>
+            <div class="kpi-value amber" id="kpiPendentes">—</div>
+            <div class="kpi-sub">dentro de 48h</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Volume por Dia</div>
+                <div class="chart-subtitle">Solicitações no período</div>
+              </div>
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <div class="chart-title">Distribuição de Zonas NPS</div>
+                    <div class="chart-subtitle">Promotores, Neutros e Detratores</div>
+                  </div>
+                </div>
+                <div style="position: relative; height: 230px;">
+                  <canvas id="chartNPS"></canvas>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--cyan)"></div>Cancelamentos
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--green)"></div>Retenções
+                </div>
+              </div>
+            </div>
+            <canvas id="chartVolume"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Decisão do Cliente</div>
+                <div class="chart-subtitle">Distribuição no período</div>
+              </div>
+            </div>
+            <canvas id="chartDecisao"></canvas>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Satisfação dos Clientes</div>
+                <div class="chart-subtitle">Distribuição de notas</div>
+              </div>
+            </div>
+            <canvas id="chartSatisfacao"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Top Motivos</div>
+                <div class="chart-subtitle">Razões mais citadas</div>
+              </div>
+            </div>
+            <div class="motivos-list" id="motivosList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-cancelamentos">
+        <div class="page-header">
+          <div>
+            <h1>Cancelamentos</h1>
+            <p>Todas as solicitações recebidas via formulário</p>
+          </div>
+          <div class="page-header-right">
+            <select class="filter-select" id="filterStatusTbl" onchange="renderTabela()">
+              <option value="">Todos</option>
+              <option value="proposta">Quer Proposta</option>
+              <option value="cancelar">Cancelamento</option>
+            </select>
+            <select class="filter-select" id="filterPeriodoTbl" onchange="renderTabela()">
+              <option value="7">7 dias</option>
+              <option value="30" selected>30 dias</option>
+              <option value="90">90 dias</option>
+              <option value="0">Todos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-top-title">Registros</div>
+            <div class="table-search">
+              🔍 <input type="text" id="searchInput" placeholder="Buscar nome, protocolo, email..."
+                oninput="renderTabela()">
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th onclick="sortTable('protocolo')">Protocolo ↕</th>
+                  <th onclick="sortTable('nome')">Cliente ↕</th>
+                  <th onclick="sortTable('telefone')">Telefone</th>
+                  <th onclick="sortTable('nota')">Nota ↕</th>
+                  <th onclick="sortTable('decisao')">Decisão ↕</th>
+                  <th onclick="sortTable('data_hora')">Data/Hora ↕</th>
+                  <th>Motivos</th>
+                  <th>Descrição</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaBody">
+                <tr>
+                  <td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-pagination">
+            <span id="paginfoText">— registros</span>
+            <div class="pag-btns" id="pagBtns"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-analise">
+        <div class="page-header">
+          <div>
+            <h1>Análise Detalhada</h1>
+            <p>Tendências e correlações dos dados de cancelamento</p>
+          </div>
+        </div>
+
+        <div class="charts-grid" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="chart-card" style="grid-column:span 2;">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Tendência Mensal</div>
+                <div class="chart-subtitle">Volume acumulado por mês</div>
+              </div>
+            </div>
+            <canvas id="chartTendencia"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Dia da Semana</div>
+                <div class="chart-subtitle">Pico de solicitações</div>
+              </div>
+            </div>
+            <canvas id="chartSemana"></canvas>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Nota × Decisão</div>
+                <div class="chart-subtitle">Correlação satisfação/retenção</div>
+              </div>
+            </div>
+            <canvas id="chartNotaDecisao"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Combinação de Motivos</div>
+                <div class="chart-subtitle">Top combinações citadas juntas</div>
+              </div>
+            </div>
+            <div class="motivos-list" id="motivosCombList" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-retencao">
+        <div class="page-header">
+          <div>
+            <h1>Retenção de Clientes</h1>
+            <p>Clientes que solicitaram proposta personalizada</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="kpi-card">
+            <div class="kpi-accent accent-green"></div>
+            <div class="kpi-label">Proposta Solicitada</div>
+            <div class="kpi-value green" id="retPropostas">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-amber"></div>
+            <div class="kpi-label">Taxa de Retenção</div>
+            <div class="kpi-value amber" id="retTaxa">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-cyan"></div>
+            <div class="kpi-label">Nota Média (Retidos)</div>
+            <div class="kpi-value cyan" id="retNota">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-accent accent-purple"></div>
+            <div class="kpi-label">Net Promoter Score (NPS)</div>
+            <div class="kpi-value" style="color: var(--purple);" id="kpiNPSRet">—</div>
+            <div class="kpi-sub" id="kpiNpsZonaRet">zona de avaliação</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-top-title">Clientes para Proposta</div>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Protocolo</th>
+                  <th>Cliente</th>
+                  <th>Telefone</th>
+                  <th>E-mail</th>
+                  <th>Nota</th>
+                  <th>Data</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="retencaoBody">
+                <tr>
+                  <td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-alertas">
+        <div class="page-header">
+          <div>
+            <h1>Alertas e Notificações</h1>
+            <p>Situações que requerem atenção da equipe</p>
+          </div>
+        </div>
+        <div class="chart-card" style="margin-bottom:20px;">
           <div class="chart-header">
-            <div>
-              <div class="chart-title">Volume por Dia</div>
-              <div class="chart-subtitle">Solicitações no período</div>
-            </div>
-            <div class="chart-legend">
-              <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Cancelamentos</div>
-              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Retenções</div>
-            </div>
+            <div class="chart-title">Central de Alertas</div>
           </div>
-          <canvas id="chartVolume"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Decisão do Cliente</div>
-              <div class="chart-subtitle">Distribuição no período</div>
+          <div class="alerts-list" id="alertasList">
+            <div class="empty-state">
+              <div class="e-ico">✅</div>
+              <p>Nenhum alerta no momento.</p>
             </div>
           </div>
-          <canvas id="chartDecisao"></canvas>
         </div>
-      </div>
+      </section>
 
-      <div class="charts-grid">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Satisfação dos Clientes</div>
-              <div class="chart-subtitle">Distribuição de notas</div>
+      <section class="section" id="sec-config">
+        <div class="page-header">
+          <div>
+            <h1>Configurações</h1>
+            <p>Conexão com Google Sheets e preferências do painel</p>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <h3>Fonte de Dados — Google Sheets</h3>
+          <div class="config-row">
+            <label>URL do Google Apps Script</label>
+            <input class="config-input" type="text" id="cfgScriptUrl"
+              placeholder="https://script.google.com/macros/s/.../exec">
+            <div class="config-hint">
+              URL atual ativa padrão:<br>
+              <code>https://script.google.com/macros/s/AKfycbwsD2zjeRjB3j-ZBWrMR4ZCzGMLlcyVbTvkEespPlzlda7fdhzmjRm1WcwcT81vQ3pN6Q/exec</code><br><br>
+              O script precisa aceitar GET com <code>?action=getDados</code> e retornar JSON com os registros.
             </div>
           </div>
-          <canvas id="chartSatisfacao"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Top Motivos</div>
-              <div class="chart-subtitle">Razões mais citadas</div>
-            </div>
+          <div class="config-row">
+            <label>Atualização automática</label>
+            <select class="config-input" id="cfgAutoRefresh"
+              style="font-family:'Rajdhani',sans-serif;font-size:.85rem;">
+              <option value="0">Desativada</option>
+              <option value="60" selected>A cada 1 minuto</option>
+              <option value="300">A cada 5 minutes</option>
+              <option value="600">A cada 10 minutos</option>
+            </select>
           </div>
-          <div class="motivos-list" id="motivosList"></div>
+          <button class="btn-save" onclick="salvarConfig()">Salvar e Conectar</button>
         </div>
-      </div>
-    </section>
 
-    <section class="section" id="sec-cancelamentos">
-      <div class="page-header">
-        <div>
-          <h1>Cancelamentos</h1>
-          <p>Todas as solicitações recebidas via formulário</p>
-        </div>
-        <div class="page-header-right">
-          <select class="filter-select" id="filterStatusTbl" onchange="renderTabela()">
-            <option value="">Todos</option>
-            <option value="proposta">Quer Proposta</option>
-            <option value="cancelar">Cancelamento</option>
-          </select>
-          <select class="filter-select" id="filterPeriodoTbl" onchange="renderTabela()">
-            <option value="7">7 dias</option>
-            <option value="30" selected>30 dias</option>
-            <option value="90">90 dias</option>
-            <option value="0">Todos</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="table-top">
-          <div class="table-top-title">Registros</div>
-          <div class="table-search">
-            🔍 <input type="text" id="searchInput" placeholder="Buscar nome, protocolo, email..." oninput="renderTabela()">
-          </div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th onclick="sortTable('protocolo')">Protocolo ↕</th>
-                <th onclick="sortTable('nome')">Cliente ↕</th>
-                <th onclick="sortTable('telefone')">Telefone</th>
-                <th onclick="sortTable('nota')">Nota ↕</th>
-                <th onclick="sortTable('decisao')">Decisão ↕</th>
-                <th onclick="sortTable('data_hora')">Data/Hora ↕</th>
-                <th>Motivos</th>
-                <th>Descrição</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaBody">
-              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="table-pagination">
-          <span id="paginfoText">— registros</span>
-          <div class="pag-btns" id="pagBtns"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-analise">
-      <div class="page-header">
-        <div>
-          <h1>Análise Detalhada</h1>
-          <p>Tendências e correlações dos dados de cancelamento</p>
-        </div>
-      </div>
-
-      <div class="charts-grid" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="chart-card" style="grid-column:span 2;">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Tendência Mensal</div>
-              <div class="chart-subtitle">Volume acumulado por mês</div>
-            </div>
-          </div>
-          <canvas id="chartTendencia"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Dia da Semana</div>
-              <div class="chart-subtitle">Pico de solicitações</div>
-            </div>
-          </div>
-          <canvas id="chartSemana"></canvas>
-        </div>
-      </div>
-
-      <div class="charts-grid">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Nota × Decisão</div>
-              <div class="chart-subtitle">Correlação satisfação/retenção</div>
-            </div>
-          </div>
-          <canvas id="chartNotaDecisao"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Combinação de Motivos</div>
-              <div class="chart-subtitle">Top combinações citadas juntas</div>
-            </div>
-          </div>
-          <div class="motivos-list" id="motivosCombList" style="margin-top:8px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-retencao">
-      <div class="page-header">
-        <div>
-          <h1>Retenção de Clientes</h1>
-          <p>Clientes que solicitaram proposta personalizada</p>
-        </div>
-      </div>
-
-      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="kpi-card">
-          <div class="kpi-accent accent-green"></div>
-          <div class="kpi-label">Proposta Solicitada</div>
-          <div class="kpi-value green" id="retPropostas">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-amber"></div>
-          <div class="kpi-label">Taxa de Retenção</div>
-          <div class="kpi-value amber" id="retTaxa">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-accent accent-cyan"></div>
-          <div class="kpi-label">Nota Média (Retidos)</div>
-          <div class="kpi-value cyan" id="retNota">—</div>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="table-top">
-          <div class="table-top-title">Clientes para Proposta</div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Protocolo</th>
-                <th>Cliente</th>
-                <th>Telefone</th>
-                <th>E-mail</th>
-                <th>Nota</th>
-                <th>Data</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="retencaoBody">
-              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-alertas">
-      <div class="page-header">
-        <div>
-          <h1>Alertas e Notificações</h1>
-          <p>Situações que requerem atenção da equipe</p>
-        </div>
-      </div>
-      <div class="chart-card" style="margin-bottom:20px;">
-        <div class="chart-header">
-          <div class="chart-title">Central de Alertas</div>
-        </div>
-        <div class="alerts-list" id="alertasList">
-          <div class="empty-state"><div class="e-ico">✅</div><p>Nenhum alerta no momento.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-config">
-      <div class="page-header">
-        <div>
-          <h1>Configurações</h1>
-          <p>Conexão com Google Sheets e preferências do painel</p>
-        </div>
-      </div>
-
-      <div class="config-card">
-        <h3>Fonte de Dados — Google Sheets</h3>
-        <div class="config-row">
-          <label>URL do Google Apps Script</label>
-          <input class="config-input" type="text" id="cfgScriptUrl"
-            placeholder="https://script.google.com/macros/s/.../exec">
-          <div class="config-hint">
-            URL atual ativa padrão:<br>
-            <code>https://script.google.com/macros/s/AKfycbxOjhCCZeek7hBFAOzxo2VtWAaRm4gfDs8GdNooqViBPc9g-td2Kot6PkrRpG2EAATz6w/exec</code><br><br>
-            O script precisa aceitar GET com <code>?action=getDados</code> e retornar JSON com os registros.
-          </div>
-        </div>
-        <div class="config-row">
-          <label>Atualização automática</label>
-          <select class="config-input" id="cfgAutoRefresh" style="font-family:'Rajdhani',sans-serif;font-size:.85rem;">
-            <option value="0">Desativada</option>
-            <option value="60" selected>A cada 1 minuto</option>
-            <option value="300">A cada 5 minutes</option>
-            <option value="600">A cada 10 minutos</option>
-          </select>
-        </div>
-        <button class="btn-save" onclick="salvarConfig()">Salvar e Conectar</button>
-      </div>
-
-      <div class="config-card">
-        <h3>Estrutura Esperada do Google Sheets</h3>
-        <p style="font-size:.85rem;color:var(--muted);line-height:1.8;">
-          A planilha deve ter as colunas na seguinte ordem:<br>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--cyan);">
-            protocolo | nome | email | telefone | cpf | nota | motivos | descricao | decisao | data_hora
-          </span><br><br>
-          O Apps Script precisa publicar como <strong>Web App</strong> com acesso <em>Anyone</em> e retornar JSON assim:
-        </p>
-        <pre style="margin-top:12px;padding:16px;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--green);overflow-x:auto;line-height:1.7;">const SHEET_NAME = 'SAC';
+        <div class="config-card">
+          <h3>Estrutura Esperada do Google Sheets</h3>
+          <p style="font-size:.85rem;color:var(--muted);line-height:1.8;">
+            A planilha deve ter as colunas na seguinte ordem:<br>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--cyan);">
+              protocolo | nome | email | telefone | cpf | nota | motivos | descricao | decisao | data_hora
+            </span><br><br>
+            O Apps Script precisa publicar como <strong>Web App</strong> com acesso <em>Anyone</em> e retornar JSON
+            assim:
+          </p>
+          <pre
+            style="margin-top:12px;padding:16px;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--green);overflow-x:auto;line-height:1.7;">const SHEET_NAME = 'SAC';
 
 function doGet(e) {
   const cb = e.parameter.callback || '';
@@ -982,423 +1622,498 @@ function doGet(e) {
 
   return ContentService.createTextOutput(output).setMimeType(mime);
 }</pre>
-      </div>
-    </section>
+        </div>
+      </section>
 
-  </div></div><script>
-// ── CONFIG ────────────────────────────────────────────────────────
-let SCRIPT_URL = localStorage.getItem('vegas_script_url') || 'https://script.google.com/macros/s/AKfycbxOjhCCZeek7hBFAOzxo2VtWAaRm4gfDs8GdNooqViBPc9g-td2Kot6PkrRpG2EAATz6w/exec';
-let AUTO_REFRESH_SEC = parseInt(localStorage.getItem('vegas_auto_refresh') || '60');
-let autoRefreshTimer = null;
+    </div>
+  </div>
+  <script>
+    // ── CONFIG ────────────────────────────────────────────────────────
+    let SCRIPT_URL = localStorage.getItem('vegas_script_url') || 'https://script.google.com/macros/s/AKfycbwsD2zjeRjB3j-ZBWrMR4ZCzGMLlcyVbTvkEespPlzlda7fdhzmjRm1WcwcT81vQ3pN6Q/exec';
+    let AUTO_REFRESH_SEC = parseInt(localStorage.getItem('vegas_auto_refresh') || '60');
+    let autoRefreshTimer = null;
 
-// ── STATE ─────────────────────────────────────────────────────────
-let allData = [];
-let filteredData = [];
-let currentPage = 1;
-const PER_PAGE = 15;
-let sortKey = 'data_hora';
-let sortDir = -1;
+    // ── STATE ─────────────────────────────────────────────────────────
+    let allData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const PER_PAGE = 15;
+    let sortKey = 'data_hora';
+    let sortDir = -1;
+    let promotores = 0;
+    let neutros = 0;
+    let detratores = 0;
+    let totalNPSRespondidos = 0;
 
-// ── CHARTS REFS ───────────────────────────────────────────────────
-let charts = {};
+    // ── CHARTS REFS ───────────────────────────────────────────────────
+    let charts = {};
 
-// ── CLOCK ─────────────────────────────────────────────────────────
-function startClock(){
-  const el = document.getElementById('clockEl');
-  setInterval(() => {
-    el.textContent = new Date().toLocaleTimeString('pt-BR');
-  }, 1000);
-}
-
-// ── NAV ───────────────────────────────────────────────────────────
-function setSection(id){
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('sec-'+id).classList.add('active');
-  event.currentTarget.classList.add('active');
-
-  const titles = {
-    overview:'Visão Geral', cancelamentos:'Cancelamentos',
-    analise:'Análise Detalhada', retencao:'Retenção',
-    alertas:'Alertas', config:'Configurações'
-  };
-  document.getElementById('topbarTitle').textContent = titles[id] || id;
-
-  if(id === 'cancelamentos') renderTabela();
-  if(id === 'analise') renderAnalise();
-  if(id === 'retencao') renderRetencao();
-  if(id === 'alertas') renderAlertas();
-  if(id === 'config') {
-    document.getElementById('cfgScriptUrl').value = SCRIPT_URL;
-    document.getElementById('cfgAutoRefresh').value = AUTO_REFRESH_SEC;
-  }
-}
-
-// ── CONFIG ────────────────────────────────────────────────────────
-function salvarConfig(){
-  SCRIPT_URL = document.getElementById('cfgScriptUrl').value.trim();
-  AUTO_REFRESH_SEC = parseInt(document.getElementById('cfgAutoRefresh').value);
-  localStorage.setItem('vegas_script_url', SCRIPT_URL);
-  localStorage.setItem('vegas_auto_refresh', AUTO_REFRESH_SEC);
-  setupAutoRefresh();
-  carregarDados();
-}
-
-function setupAutoRefresh(){
-  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
-  if(AUTO_REFRESH_SEC > 0){
-    autoRefreshTimer = setInterval(carregarDados, AUTO_REFRESH_SEC * 1000);
-  }
-}
-
-// ── LOAD DATA ─────────────────────────────────────────────────────
-async function carregarDados(){
-  const btn = document.getElementById('btnRefresh');
-  const dot = document.getElementById('statusDot');
-  const statusTxt = document.getElementById('statusText');
-
-  btn.classList.add('refreshing');
-  dot.className = 'status-dot loading';
-  statusTxt.textContent = 'Carregando...';
-
-  try {
-    const json = await fetchViaJsonp(SCRIPT_URL + '?action=getDados');
-    if(!json) throw new Error('Sem resposta');
-    allData = (Array.isArray(json) ? json : (json.data || json.values || [])).map(normalizar);
-    dot.className = 'status-dot';
-    statusTxt.textContent = 'Google Sheets ✓';
-  } catch(err){
-    console.error('Erro ao carregar dados:', err);
-    allData = [];
-    dot.className = 'status-dot offline';
-    statusTxt.textContent = 'Erro de conexão';
-  }
-
-  btn.classList.remove('refreshing');
-  document.getElementById('lastUpdateText').textContent =
-    'Última atualização: ' + new Date().toLocaleString('pt-BR');
-
-  processar();
-}
-
-
-// ── FETCH VIA JSONP (contorna CORS do Apps Script) ────────────────
-function fetchViaJsonp(url) {
-  return new Promise((resolve, reject) => {
-    const cbName = '__vegas_cb_' + Date.now();
-    const script = document.createElement('script');
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error('Timeout'));
-    }, 15000);
-
-    function cleanup() {
-      clearTimeout(timeout);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
+    // ── CLOCK ─────────────────────────────────────────────────────────
+    function startClock() {
+      const el = document.getElementById('clockEl');
+      setInterval(() => {
+        el.textContent = new Date().toLocaleTimeString('pt-BR');
+      }, 1000);
     }
 
-    window[cbName] = function(data) {
-      cleanup();
-      resolve(data);
+
+
+    // ── NAV ───────────────────────────────────────────────────────────
+    function setSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('sec-' + id).classList.add('active');
+      event.currentTarget.classList.add('active');
+
+      const titles = {
+        overview: 'Visão Geral', cancelamentos: 'Cancelamentos',
+        analise: 'Análise Detalhada', retencao: 'Retenção',
+        alertas: 'Alertas', config: 'Configurações'
+      };
+      document.getElementById('topbarTitle').textContent = titles[id] || id;
+
+      if (id === 'cancelamentos') renderTabela();
+      if (id === 'analise') renderAnalise();
+      if (id === 'retencao') renderRetencao();
+      if (id === 'alertas') renderAlertas();
+      if (id === 'config') {
+        document.getElementById('cfgScriptUrl').value = SCRIPT_URL;
+        document.getElementById('cfgAutoRefresh').value = AUTO_REFRESH_SEC;
+      }
+    }
+
+    // ── CONFIG ────────────────────────────────────────────────────────
+    function salvarConfig() {
+      SCRIPT_URL = document.getElementById('cfgScriptUrl').value.trim();
+      AUTO_REFRESH_SEC = parseInt(document.getElementById('cfgAutoRefresh').value);
+      localStorage.setItem('vegas_script_url', SCRIPT_URL);
+      localStorage.setItem('vegas_auto_refresh', AUTO_REFRESH_SEC);
+      setupAutoRefresh();
+      carregarDados();
+    }
+
+    function setupAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      if (AUTO_REFRESH_SEC > 0) {
+        autoRefreshTimer = setInterval(carregarDados, AUTO_REFRESH_SEC * 1000);
+      }
+    }
+
+    // ── LOAD DATA ─────────────────────────────────────────────────────
+    async function carregarDados() {
+      const btn = document.getElementById('btnRefresh');
+      const dot = document.getElementById('statusDot');
+      const statusTxt = document.getElementById('statusText');
+
+      btn.classList.add('refreshing');
+      dot.className = 'status-dot loading';
+      statusTxt.textContent = 'Carregando...';
+
+      try {
+        const json = await fetchViaJsonp(SCRIPT_URL + '?action=getDados');
+        if (!json) throw new Error('Sem resposta');
+        allData = (Array.isArray(json) ? json : (json.data || json.values || [])).map(normalizar);
+        dot.className = 'status-dot';
+        statusTxt.textContent = 'Google Sheets ✓';
+      } catch (err) {
+        console.error('Erro ao carregar dados:', err);
+        allData = [];
+        dot.className = 'status-dot offline';
+        statusTxt.textContent = 'Erro de conexão';
+      }
+
+      btn.classList.remove('refreshing');
+      document.getElementById('lastUpdateText').textContent =
+        'Última atualização: ' + new Date().toLocaleString('pt-BR');
+
+      processar();
+    }
+
+    // ── FETCH VIA JSONP (contorna CORS do Apps Script) ────────────────
+    function fetchViaJsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cbName = '__vegas_cb_' + Date.now();
+        const script = document.createElement('script');
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('Timeout'));
+        }, 15000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[cbName] = function (data) {
+          cleanup();
+          resolve(data);
+        };
+
+        script.src = url + '&callback=' + cbName;
+        script.onerror = () => { cleanup(); reject(new Error('Script error')); };
+        document.head.appendChild(script);
+      });
+    }
+
+    function normalizar(r) {
+      return {
+        protocolo: String(r.protocolo || r['Protocolo'] || ''),
+        nome: String(r.nome || r['Nome'] || ''),
+        email: String(r.email || r['E-mail'] || r['Email'] || ''),
+        telefone: String(r.telefone || r['Telefone'] || ''),
+        cpf: String(r.cpf || r['CPF/CNPJ'] || r['CPF'] || ''),
+        nota: String(r.nota || r['Satisfação'] || r['Satisfacao'] || ''),
+        motivos: String(r.motivos || r['Motivos'] || ''),
+        descricao: String(r.descricao || r['Descrição'] || r['Descricao'] || ''),
+        decisao: String(r.decisao || r['Decisão'] || r['Decisao'] || r['Status'] || ''),
+        data_hora: formatData(String(r.data_hora || r['Data/Hora'] || r['data'] || '')),
+        respondido: String(r.respondido || r['Respondido'] || r['Status'] || ''),
+      };
+    }
+
+
+
+    // ── PROCESSAR ─────────────────────────────────────────────────────
+    function aplicarFiltro() { processar(); }
+
+    function getDiasCortado() {
+      const dias = parseInt(document.getElementById('filterPeriodo')?.value || '30');
+      return dias;
+    }
+
+    function filtrarPorDias(data, dias) {
+      if (dias === 0) return data;
+      const corte = new Date();
+      corte.setDate(corte.getDate() - dias);
+      return data.filter(r => {
+        const d = parseData(r.data_hora);
+        return d && d >= corte;
+      });
+    }
+
+    function parseData(str) {
+      if (!str) return null;
+      if (/^\d{4}-\d{2}-\d{2}T/.test(str)) return new Date(str);
+      const m = str.match(/(\d{2})\/(\d{2})\/(\d{4})(?:[, ]+(\d{2}:\d{2}))?/);
+      if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4] || '00:00'}:00`);
+      const d = new Date(str);
+      return isNaN(d) ? null : d;
+    }
+
+    function formatData(str) {
+      const d = parseData(str);
+      if (!d) return str || '—';
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+
+    function processar() {
+      const dias = getDiasCortado();
+      filteredData = filtrarPorDias(allData, dias);
+
+      renderKPIs(filteredData);
+      renderNPS(filteredData);
+      renderChartVolume(filteredData);
+      renderChartDecisao(filteredData);
+      renderChartSatisfacao(filteredData);
+      renderMotivos(filteredData);
+      renderBadge();
+    }
+
+    // ── NPS ───────────────────────────────────────────────────────────
+    function renderNPS(data) {
+      promotores = 0;
+      neutros = 0;
+      detratores = 0;
+      totalNPSRespondidos = 0;
+
+      data.forEach(row => {
+        if (row.nps !== undefined && row.nps !== null && row.nps !== '') {
+          const notaNPS = parseInt(row.nps);
+          if (!isNaN(notaNPS)) {
+            totalNPSRespondidos++;
+            if (notaNPS >= 9) promotores++;
+            else if (notaNPS >= 7) neutros++;
+            else detratores++;
+          }
+        }
+      });
+
+      let npsScore = 0;
+      let zonaNPS = 'Sem avaliações';
+
+      if (totalNPSRespondidos > 0) {
+        const pctPromotores = (promotores / totalNPSRespondidos) * 100;
+        const pctDetratores = (detratores / totalNPSRespondidos) * 100;
+        npsScore = Math.round(pctPromotores - pctDetratores);
+
+        if (npsScore >= 75) zonaNPS = 'Excelência (75 a 100)';
+        else if (npsScore >= 50) zonaNPS = 'Qualidade (50 a 74)';
+        else if (npsScore >= 0) zonaNPS = 'Aperfeiçoamento (0 a 49)';
+        else zonaNPS = 'Crítica (-100 a -1)';
+      }
+
+      set('kpiNPS', totalNPSRespondidos > 0 ? npsScore : '—');
+      set('kpiNpsZona', zonaNPS);
+      set('kpiNPSRet', totalNPSRespondidos > 0 ? npsScore : '—');
+      set('kpiNpsZonaRet', zonaNPS);
+
+      makeChart('chartNPS', {
+        type: 'doughnut',
+        data: {
+          labels: ['Promotores (9-10)', 'Neutros (7-8)', 'Detratores (0-6)'],
+          datasets: [{
+            data: [promotores, neutros, detratores],
+            backgroundColor: ['#00ffb2', '#ffb300', '#ff2d55'],
+            borderColor: '#050816',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: { color: '#e2e8f0', font: { family: 'Rajdhani', size: 12 } }
+            }
+          }
+        }
+      });
+    }
+
+    // ── KPIs ──────────────────────────────────────────────────────────
+    function renderKPIs(data) {
+      const total = data.length;
+      const retencoes = data.filter(r => r.decisao.toLowerCase().includes('proposta')).length;
+      const cancelamentos = total - retencoes;
+      const taxa = total > 0 ? Math.round(retencoes / total * 100) : 0;
+
+      const notaMap = { 'Muito Satisfeito': 5, 'Satisfeito': 4, 'Regular': 3, 'Insatisfeito': 2, 'Muito Insatisfeito': 1 };
+      const notas = data.map(r => notaMap[r.nota]).filter(Boolean);
+      const mediaNota = notas.length ? (notas.reduce((a, b) => a + b, 0) / notas.length).toFixed(1) : '—';
+
+      const pendentes = data.filter(r => {
+        const d = parseData(r.data_hora);
+        if (!d) return false;
+        const diff = (new Date() - d) / 3600000;
+        return diff < 48;
+      }).length;
+
+      set('kpiTotal', total);
+      set('kpiCancelamentos', cancelamentos);
+      set('kpiRetencoes', retencoes);
+      set('kpiTaxa', taxa + '%');
+      set('kpiNota', mediaNota);
+      set('kpiPendentes', pendentes);
+
+      const metade = Math.floor(data.length / 2);
+      const anterior = data.slice(metade);
+      if (anterior.length) {
+        const taxaAnt = Math.round(anterior.filter(r => r.decisao.toLowerCase().includes('proposta')).length / anterior.length * 100);
+        const diff = taxa - taxaAnt;
+        const el = document.getElementById('kpiTaxaDelta');
+        el.textContent = (diff >= 0 ? '▲ +' : '▼ ') + diff + '% vs período anterior';
+        el.className = 'kpi-delta ' + (diff >= 0 ? 'up' : 'down');
+      }
+    }
+    function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+    // ── BADGE PENDENTES ───────────────────────────────────────────────
+    function renderBadge() {
+      const n = allData.filter(r => {
+        const d = parseData(r.data_hora);
+        if (!d) return false;
+        return (new Date() - d) / 3600000 < 48;
+      }).length;
+      const el = document.getElementById('badgePendentes');
+      if (el) { el.textContent = n; el.style.display = n ? '' : 'none'; }
+    }
+
+    // ── CHART HELPERS ─────────────────────────────────────────────────
+    function makeChart(id, config) {
+      if (charts[id]) charts[id].destroy();
+      const ctx = document.getElementById(id)?.getContext('2d');
+      if (!ctx) return;
+      charts[id] = new Chart(ctx, config);
+    }
+
+    const chartDefaults = {
+      color: '#e2e8f0',
+      plugins: { legend: { labels: { color: 'rgba(185,197,212,.7)', font: { size: 11 } } } },
     };
 
-    script.src = url + '&callback=' + cbName;
-    script.onerror = () => { cleanup(); reject(new Error('Script error')); };
-    document.head.appendChild(script);
-  });
-}
+    // ── VOLUME LINE ───────────────────────────────────────────────────
+    function renderChartVolume(data) {
+      const map = {};
+      data.forEach(r => {
+        const d = parseData(r.data_hora);
+        if (!d) return;
+        const key = d.toLocaleDateString('pt-BR');
+        if (!map[key]) map[key] = { c: 0, r: 0 };
+        if (r.decisao.toLowerCase().includes('proposta')) map[key].r++;
+        else map[key].c++;
+      });
 
-function normalizar(r){
-  return {
-    protocolo : String(r.protocolo  || r['Protocolo']  || ''),
-    nome      : String(r.nome       || r['Nome']       || ''),
-    email     : String(r.email      || r['E-mail']     || r['Email']     || ''),
-    telefone  : String(r.telefone   || r['Telefone']   || ''),
-    cpf       : String(r.cpf        || r['CPF/CNPJ']   || r['CPF']      || ''),
-    nota      : String(r.nota       || r['Satisfação'] || r['Satisfacao']|| ''),
-    motivos   : String(r.motivos    || r['Motivos']    || ''),
-    descricao : String(r.descricao  || r['Descrição']  || r['Descricao'] || ''),
-    decisao   : String(r.decisao    || r['Decisão']    || r['Decisao']   || r['Status'] || ''),
-    data_hora  : formatData(String(r.data_hora  || r['Data/Hora']  || r['data'] || '')),
-    respondido : String(r.respondido || r['Respondido'] || r['Status'] || ''),
-  };
-}
-
-
-
-// ── PROCESSAR ─────────────────────────────────────────────────────
-function aplicarFiltro(){ processar(); }
-
-function getDiasCortado(){
-  const dias = parseInt(document.getElementById('filterPeriodo')?.value || '30');
-  return dias;
-}
-
-function filtrarPorDias(data, dias){
-  if(dias === 0) return data;
-  const corte = new Date();
-  corte.setDate(corte.getDate() - dias);
-  return data.filter(r => {
-    const d = parseData(r.data_hora);
-    return d && d >= corte;
-  });
-}
-
-function parseData(str){
-  if(!str) return null;
-  if(/^\d{4}-\d{2}-\d{2}T/.test(str)) return new Date(str);
-  const m = str.match(/(\d{2})\/(\d{2})\/(\d{4})(?:[, ]+(\d{2}:\d{2}))?/);
-  if(m) return new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]||'00:00'}:00`);
-  const d = new Date(str);
-  return isNaN(d) ? null : d;
-}
-
-function formatData(str){
-  const d = parseData(str);
-  if(!d) return str || '—';
-  const pad = n => String(n).padStart(2,'0');
-  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-
-function processar(){
-  const dias = getDiasCortado();
-  filteredData = filtrarPorDias(allData, dias);
-
-  renderKPIs(filteredData);
-  renderChartVolume(filteredData);
-  renderChartDecisao(filteredData);
-  renderChartSatisfacao(filteredData);
-  renderMotivos(filteredData);
-  renderBadge();
-}
-
-// ── KPIs ──────────────────────────────────────────────────────────
-function renderKPIs(data){
-  const total = data.length;
-  const retencoes = data.filter(r => r.decisao.toLowerCase().includes('proposta')).length;
-  const cancelamentos = total - retencoes;
-  const taxa = total > 0 ? Math.round(retencoes/total*100) : 0;
-
-  const notaMap = {'Muito Satisfeito':5,'Satisfeito':4,'Regular':3,'Insatisfeito':2,'Muito Insatisfeito':1};
-  const notas = data.map(r => notaMap[r.nota]).filter(Boolean);
-  const mediaNota = notas.length ? (notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(1) : '—';
-
-  const pendentes = data.filter(r => {
-    const d = parseData(r.data_hora);
-    if(!d) return false;
-    const diff = (new Date() - d) / 3600000;
-    return diff < 48;
-  }).length;
-
-  set('kpiTotal', total);
-  set('kpiCancelamentos', cancelamentos);
-  set('kpiRetencoes', retencoes);
-  set('kpiTaxa', taxa+'%');
-  set('kpiNota', mediaNota);
-  set('kpiPendentes', pendentes);
-
-  const metade = Math.floor(data.length/2);
-  const anterior = data.slice(metade);
-  if(anterior.length){
-    const taxaAnt = Math.round(anterior.filter(r=>r.decisao.toLowerCase().includes('proposta')).length/anterior.length*100);
-    const diff = taxa - taxaAnt;
-    const el = document.getElementById('kpiTaxaDelta');
-    el.textContent = (diff >= 0 ? '▲ +' : '▼ ') + diff + '% vs período anterior';
-    el.className = 'kpi-delta ' + (diff >= 0 ? 'up' : 'down');
-  }
-}
-function set(id, val){ const el = document.getElementById(id); if(el) el.textContent = val; }
-
-// ── BADGE PENDENTES ───────────────────────────────────────────────
-function renderBadge(){
-  const n = allData.filter(r => {
-    const d = parseData(r.data_hora);
-    if(!d) return false;
-    return (new Date() - d)/3600000 < 48;
-  }).length;
-  const el = document.getElementById('badgePendentes');
-  if(el){ el.textContent = n; el.style.display = n ? '' : 'none'; }
-}
-
-// ── CHART HELPERS ─────────────────────────────────────────────────
-function makeChart(id, config){
-  if(charts[id]) charts[id].destroy();
-  const ctx = document.getElementById(id)?.getContext('2d');
-  if(!ctx) return;
-  charts[id] = new Chart(ctx, config);
-}
-
-const chartDefaults = {
-  color: '#e2e8f0',
-  plugins: { legend:{ labels:{ color:'rgba(185,197,212,.7)', font:{size:11} } } },
-};
-
-// ── VOLUME LINE ───────────────────────────────────────────────────
-function renderChartVolume(data){
-  const map = {};
-  data.forEach(r => {
-    const d = parseData(r.data_hora);
-    if(!d) return;
-    const key = d.toLocaleDateString('pt-BR');
-    if(!map[key]) map[key] = {c:0,r:0};
-    if(r.decisao.toLowerCase().includes('proposta')) map[key].r++;
-    else map[key].c++;
-  });
-
-  const dias = getDiasCortado() || 30;
-  const labels = [];
-  const cancel = [];
-  const retenc = [];
-  for(let i = dias-1; i >= 0; i--){
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-    const k = d.toLocaleDateString('pt-BR');
-    labels.push(k.slice(0,5));
-    cancel.push(map[k]?.c || 0);
-    retenc.push(map[k]?.r || 0);
-  }
-
-  makeChart('chartVolume',{
-    type:'line',
-    data:{
-      labels,
-      datasets:[
-        {label:'Cancelamentos',data:cancel,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.08)',
-         fill:true,tension:.4,pointRadius:3,pointHoverRadius:6,borderWidth:2},
-        {label:'Retenções',data:retenc,borderColor:'#00ffb2',backgroundColor:'rgba(0,255,178,.08)',
-         fill:true,tension:.4,pointRadius:3,pointHoverRadius:6,borderWidth:2},
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      scales:{
-        x:{grid:{color:'rgba(0,212,255,.05)'},ticks:{color:'rgba(185,197,212,.5)',font:{size:10},maxTicksLimit:10}},
-        y:{grid:{color:'rgba(0,212,255,.05)'},ticks:{color:'rgba(185,197,212,.5)',font:{size:10}},beginAtZero:true}
-      },
-      plugins:{...chartDefaults.plugins, tooltip:{backgroundColor:'rgba(13,21,38,.95)',borderColor:'rgba(0,212,255,.3)',borderWidth:1}}
-    }
-  });
-}
-
-// ── DECISÃO DOUGHNUT ──────────────────────────────────────────────
-function renderChartDecisao(data){
-  const prop = data.filter(r=>r.decisao.toLowerCase().includes('proposta')).length;
-  const canc = data.length - prop;
-  makeChart('chartDecisao',{
-    type:'doughnut',
-    data:{
-      labels:['Quer Proposta','Cancelamento'],
-      datasets:[{
-        data:[prop,canc],
-        backgroundColor:['rgba(0,255,178,.7)','rgba(255,45,85,.7)'],
-        borderColor:['#00ffb2','#ff2d55'],
-        borderWidth:2,
-        hoverOffset:8
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      cutout:'68%',
-      plugins:{
-        legend:{position:'bottom',labels:{color:'rgba(185,197,212,.7)',font:{size:11},padding:16}},
-        tooltip:{backgroundColor:'rgba(13,21,38,.95)',borderColor:'rgba(0,212,255,.3)',borderWidth:1}
+      const dias = getDiasCortado() || 30;
+      const labels = [];
+      const cancel = [];
+      const retenc = [];
+      for (let i = dias - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const k = d.toLocaleDateString('pt-BR');
+        labels.push(k.slice(0, 5));
+        cancel.push(map[k]?.c || 0);
+        retenc.push(map[k]?.r || 0);
       }
-    }
-  });
-}
 
-// ── SATISFAÇÃO ────────────────────────────────────────────────────
-function renderChartSatisfacao(data){
-  const labels = ['Muito Satisfeito','Satisfeito','Regular','Insatisfeito','Muito Insatisfeito'];
-  const counts = labels.map(l => data.filter(r=>r.nota===l).length);
-  const colors = ['rgba(0,255,178,.7)','rgba(0,212,255,.7)','rgba(255,179,0,.7)','rgba(255,100,50,.7)','rgba(255,45,85,.7)'];
-  makeChart('chartSatisfacao',{
-    type:'bar',
-    data:{labels,datasets:[{data:counts,backgroundColor:colors,borderColor:colors.map(c=>c.replace('.7','.9')),borderWidth:1,borderRadius:6}]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(13,21,38,.95)'}},
-      scales:{
-        x:{grid:{display:false},ticks:{color:'rgba(185,197,212,.6)',font:{size:9}}},
-        y:{grid:{color:'rgba(0,212,255,.05)'},ticks:{color:'rgba(185,197,212,.5)',font:{size:10}},beginAtZero:true}
-      }
+      makeChart('chartVolume', {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Cancelamentos', data: cancel, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,.08)',
+              fill: true, tension: .4, pointRadius: 3, pointHoverRadius: 6, borderWidth: 2
+            },
+            {
+              label: 'Retenções', data: retenc, borderColor: '#00ffb2', backgroundColor: 'rgba(0,255,178,.08)',
+              fill: true, tension: .4, pointRadius: 3, pointHoverRadius: 6, borderWidth: 2
+            },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: 'rgba(0,212,255,.05)' }, ticks: { color: 'rgba(185,197,212,.5)', font: { size: 10 }, maxTicksLimit: 10 } },
+            y: { grid: { color: 'rgba(0,212,255,.05)' }, ticks: { color: 'rgba(185,197,212,.5)', font: { size: 10 } }, beginAtZero: true }
+          },
+          plugins: { ...chartDefaults.plugins, tooltip: { backgroundColor: 'rgba(13,21,38,.95)', borderColor: 'rgba(0,212,255,.3)', borderWidth: 1 } }
+        }
+      });
     }
-  });
-}
 
-// ── TOP MOTIVOS ───────────────────────────────────────────────────
-function renderMotivos(data){
-  const map = {};
-  data.forEach(r => {
-    (r.motivos||'').split(',').forEach(m => {
-      const k = m.trim();
-      if(k && k !== 'Não informado') map[k] = (map[k]||0)+1;
-    });
-  });
-  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const max = sorted[0]?.[1] || 1;
-  const colors = ['#00d4ff','#7b61ff','#00ffb2','#ffb300','#ff2d55','#a78bfa'];
-  const el = document.getElementById('motivosList');
-  if(!el) return;
-  el.innerHTML = sorted.map(([k,v],i) => `
+    // ── DECISÃO DOUGHNUT ──────────────────────────────────────────────
+    function renderChartDecisao(data) {
+      const prop = data.filter(r => r.decisao.toLowerCase().includes('proposta')).length;
+      const canc = data.length - prop;
+      makeChart('chartDecisao', {
+        type: 'doughnut',
+        data: {
+          labels: ['Quer Proposta', 'Cancelamento'],
+          datasets: [{
+            data: [prop, canc],
+            backgroundColor: ['rgba(0,255,178,.7)', 'rgba(255,45,85,.7)'],
+            borderColor: ['#00ffb2', '#ff2d55'],
+            borderWidth: 2,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: 'rgba(185,197,212,.7)', font: { size: 11 }, padding: 16 } },
+            tooltip: { backgroundColor: 'rgba(13,21,38,.95)', borderColor: 'rgba(0,212,255,.3)', borderWidth: 1 }
+          }
+        }
+      });
+    }
+
+    // ── SATISFAÇÃO ────────────────────────────────────────────────────
+    function renderChartSatisfacao(data) {
+      const labels = ['Muito Satisfeito', 'Satisfeito', 'Regular', 'Insatisfeito', 'Muito Insatisfeito'];
+      const counts = labels.map(l => data.filter(r => r.nota === l).length);
+      const colors = ['rgba(0,255,178,.7)', 'rgba(0,212,255,.7)', 'rgba(255,179,0,.7)', 'rgba(255,100,50,.7)', 'rgba(255,45,85,.7)'];
+      makeChart('chartSatisfacao', {
+        type: 'bar',
+        data: { labels, datasets: [{ data: counts, backgroundColor: colors, borderColor: colors.map(c => c.replace('.7', '.9')), borderWidth: 1, borderRadius: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(13,21,38,.95)' } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: 'rgba(185,197,212,.6)', font: { size: 9 } } },
+            y: { grid: { color: 'rgba(0,212,255,.05)' }, ticks: { color: 'rgba(185,197,212,.5)', font: { size: 10 } }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    // ── TOP MOTIVOS ───────────────────────────────────────────────────
+    function renderMotivos(data) {
+      const map = {};
+      data.forEach(r => {
+        (r.motivos || '').split(',').forEach(m => {
+          const k = m.trim();
+          if (k && k !== 'Não informado') map[k] = (map[k] || 0) + 1;
+        });
+      });
+      const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      const max = sorted[0]?.[1] || 1;
+      const colors = ['#00d4ff', '#7b61ff', '#00ffb2', '#ffb300', '#ff2d55', '#a78bfa'];
+      const el = document.getElementById('motivosList');
+      if (!el) return;
+      el.innerHTML = sorted.map(([k, v], i) => `
     <div class="motivo-item">
       <div class="motivo-label">${k}</div>
       <div class="motivo-bar-wrap">
-        <div class="motivo-bar" style="width:${Math.round(v/max*100)}%;background:${colors[i%colors.length]};"></div>
+        <div class="motivo-bar" style="width:${Math.round(v / max * 100)}%;background:${colors[i % colors.length]};"></div>
       </div>
       <div class="motivo-count">${v}</div>
     </div>
   `).join('') || '<div class="empty-state"><p>Sem dados</p></div>';
-}
+    }
 
-// ── TABELA ────────────────────────────────────────────────────────
-function renderTabela(){
-  const busca = document.getElementById('searchInput')?.value.toLowerCase() || '';
-  const statusF = document.getElementById('filterStatusTbl')?.value || '';
-  const diasF = parseInt(document.getElementById('filterPeriodoTbl')?.value || '30');
+    // ── TABELA ────────────────────────────────────────────────────────
+    function renderTabela() {
+      const busca = document.getElementById('searchInput')?.value.toLowerCase() || '';
+      const statusF = document.getElementById('filterStatusTbl')?.value || '';
+      const diasF = parseInt(document.getElementById('filterPeriodoTbl')?.value || '30');
 
-  let data = filtrarPorDias(allData, diasF);
+      let data = filtrarPorDias(allData, diasF);
 
-  if(statusF === 'proposta') data = data.filter(r=>r.decisao.toLowerCase().includes('proposta'));
-  if(statusF === 'cancelar') data = data.filter(r=>!r.decisao.toLowerCase().includes('proposta'));
+      if (statusF === 'proposta') data = data.filter(r => r.decisao.toLowerCase().includes('proposta'));
+      if (statusF === 'cancelar') data = data.filter(r => !r.decisao.toLowerCase().includes('proposta'));
 
-  if(busca) data = data.filter(r =>
-    r.nome.toLowerCase().includes(busca) ||
-    r.protocolo.toLowerCase().includes(busca) ||
-    r.email.toLowerCase().includes(busca) ||
-    (r.descricao||'').toLowerCase().includes(busca)
-  );
+      if (busca) data = data.filter(r =>
+        r.nome.toLowerCase().includes(busca) ||
+        r.protocolo.toLowerCase().includes(busca) ||
+        r.email.toLowerCase().includes(busca) ||
+        (r.descricao || '').toLowerCase().includes(busca)
+      );
 
-  data.sort((a,b) => {
-    const va = a[sortKey]||'', vb = b[sortKey]||'';
-    return sortDir * va.localeCompare(vb);
-  });
+      data.sort((a, b) => {
+        const va = a[sortKey] || '', vb = b[sortKey] || '';
+        return sortDir * va.localeCompare(vb);
+      });
 
-  const total = data.length;
-  const pages = Math.ceil(total/PER_PAGE) || 1;
-  if(currentPage > pages) currentPage = 1;
+      const total = data.length;
+      const pages = Math.ceil(total / PER_PAGE) || 1;
+      if (currentPage > pages) currentPage = 1;
 
-  const slice = data.slice((currentPage-1)*PER_PAGE, currentPage*PER_PAGE);
+      const slice = data.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-  const tbody = document.getElementById('tabelaBody');
-  if(!slice.length){
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
-  } else {
-    tbody.innerHTML = slice.map((r, i) => {
-      const isProp = r.decisao.toLowerCase().includes('proposta');
-      const tagClass = isProp ? 'tag-proposta' : 'tag-cancelamento';
-      const tagLabel = isProp ? '✅ Proposta' : '❌ Cancelamento';
-      const motStr = (r.motivos||'').split(',').slice(0,2).map(m=>m.trim()).filter(Boolean).join(', ') || '—';
-      const desc = (r.descricao||'').trim();
-      const descPreview = desc.length > 50 ? desc.slice(0,50) + '...' : desc;
-      const rowId = 'detail-' + i;
-      const jaRespondido = (r.respondido||'').toLowerCase().includes('respondido');
-      const btnHtml = jaRespondido
-        ? `<span class="tag-respondido">✅ Respondido</span>`
-        : `<button class="btn-respondido" onclick="event.stopPropagation();marcarRespondido('${r.protocolo}',this)">📩 Marcar</button>`;
-      return `<tr onclick="toggleDetail('${rowId}')" style="cursor:pointer;">
+      const tbody = document.getElementById('tabelaBody');
+      if (!slice.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
+      } else {
+        tbody.innerHTML = slice.map((r, i) => {
+          const isProp = r.decisao.toLowerCase().includes('proposta');
+          const tagClass = isProp ? 'tag-proposta' : 'tag-cancelamento';
+          const tagLabel = isProp ? '✅ Proposta' : '❌ Cancelamento';
+          const motStr = (r.motivos || '').split(',').slice(0, 2).map(m => m.trim()).filter(Boolean).join(', ') || '—';
+          const desc = (r.descricao || '').trim();
+          const descPreview = desc.length > 50 ? desc.slice(0, 50) + '...' : desc;
+          const rowId = 'detail-' + i;
+          const jaRespondido = (r.respondido || '').toLowerCase().includes('respondido');
+          const btnHtml = jaRespondido
+            ? `<span class="tag-respondido">✅ Respondido</span>`
+            : `<button class="btn-respondido" onclick="event.stopPropagation();marcarRespondido('${r.protocolo}',this)">📩 Marcar</button>`;
+          return `<tr onclick="toggleDetail('${rowId}')" style="cursor:pointer;">
         <td><span class="proto-tag">${r.protocolo}</span></td>
         <td>${r.nome}</td>
         <td>${r.telefone}</td>
@@ -1406,7 +2121,7 @@ function renderTabela(){
         <td><span class="status-tag ${tagClass}">${tagLabel}</span></td>
         <td>${r.data_hora}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;color:var(--muted)">${motStr}</td>
-        <td class="desc-cell ${!desc ? 'empty' : ''}" title="${desc.replace(/"/g,'&quot;')}">${descPreview || 'sem descrição'}</td>
+        <td class="desc-cell ${!desc ? 'empty' : ''}" title="${desc.replace(/"/g, '&quot;')}">${descPreview || 'sem descrição'}</td>
         <td>${btnHtml}</td>
       </tr>
       <tr id="${rowId}" class="row-detail">
@@ -1416,226 +2131,226 @@ function renderTabela(){
           ${r.motivos && r.motivos !== 'Não informado' ? '<div class="detail-label" style="margin-top:10px">📋 Motivos</div><div class="detail-text">' + r.motivos + '</div>' : ''}
         </td>
       </tr>`;
-    }).join('');
-  }
-
-  document.getElementById('paginfoText').textContent = `${total} registros`;
-  renderPaginacao(pages);
-}
-
-
-function toggleDetail(id){
-  const row = document.getElementById(id);
-  if(!row) return;
-  row.classList.toggle('open');
-}
-
-// ── SORT TABLE ──
-function sortTable(key){
-  if(sortKey === key) sortDir *= -1;
-  else { sortKey = key; sortDir = -1; }
-  renderTabela();
-}
-
-// ── MARCAR RESPONDIDO ─────────────────────────────────────────────
-function marcarRespondido(protocolo, btn){
-  btn.disabled = true;
-  btn.textContent = '⏳ Salvando...';
-  btn.style.color = 'var(--amber)';
-  btn.style.borderColor = 'rgba(255,179,0,.3)';
-
-  const url = SCRIPT_URL + '?action=marcarRespondido&protocolo=' + encodeURIComponent(protocolo);
-  const cbName = '__vegas_resp_' + Date.now();
-  const script = document.createElement('script');
-  const timeout = setTimeout(() => {
-    script.remove();
-    btn.textContent = '❌ Erro';
-    btn.style.color = 'var(--red)';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = '📩 Marcar';
-      btn.style.color = 'var(--cyan)';
-      btn.style.borderColor = 'rgba(0,212,255,.3)';
-    }, 2000);
-  }, 10000);
-
-  window[cbName] = function(res){
-    clearTimeout(timeout);
-    script.remove();
-    delete window[cbName];
-    if(res && res.ok){
-      btn.textContent = '✅ Respondido';
-      btn.style.color = 'var(--green)';
-      btn.style.borderColor = 'rgba(0,255,178,.3)';
-      btn.style.background = 'rgba(0,255,178,.08)';
-      const item = allData.find(r => r.protocolo === protocolo);
-      if(item) item.respondido = 'Respondido';
-    } else {
-      btn.disabled = false;
-      btn.textContent = '❌ Erro';
-      btn.style.color = 'var(--red)';
-      setTimeout(() => {
-        btn.textContent = '📩 Marcar';
-        btn.style.color = 'var(--cyan)';
-        btn.style.borderColor = 'rgba(0,212,255,.3)';
-        btn.disabled = false;
-      }, 2000);
-    }
-  };
-
-  script.src = url + '&callback=' + cbName;
-  script.onerror = () => { clearTimeout(timeout); window[cbName]({ok:false}); };
-  document.head.appendChild(script);
-}
-
-function renderPaginacao(pages){
-  const el = document.getElementById('pagBtns');
-  let html = `<button class="pag-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`;
-  for(let i=1;i<=Math.min(pages,7);i++){
-    html += `<button class="pag-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-  }
-  html += `<button class="pag-btn" onclick="goPage(${currentPage+1})" ${currentPage>=pages?'disabled':''}>›</button>`;
-  el.innerHTML = html;
-}
-function goPage(p){ currentPage = p; renderTabela(); }
-
-// ── ANÁLISE ───────────────────────────────────────────────────────
-function renderAnalise(){
-  const mapMes = {};
-  allData.forEach(r => {
-    const d = parseData(r.data_hora);
-    if(!d) return;
-    const k = `${d.getMonth()+1}/${d.getFullYear()}`;
-    if(!mapMes[k]) mapMes[k] = 0;
-    mapMes[k]++;
-  });
-  const mesLabels = Object.keys(mapMes);
-  const mesVals = Object.values(mapMes);
-
-  makeChart('chartTendencia',{
-    type:'bar',
-    data:{
-      labels:mesLabels,
-      datasets:[{
-        data:mesVals,
-        backgroundColor:'rgba(0,212,255,.25)',
-        borderColor:'#00d4ff',
-        borderWidth:2,
-        borderRadius:6,
-        hoverBackgroundColor:'rgba(0,212,255,.45)'
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(13,21,38,.95)'}},
-      scales:{
-        x:{grid:{display:false},ticks:{color:'rgba(185,197,212,.5)',font:{size:10}}},
-        y:{grid:{color:'rgba(0,212,255,.05)'},ticks:{color:'rgba(185,197,212,.5)'},beginAtZero:true}
+        }).join('');
       }
-    }
-  });
 
-  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const mapDia = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
-  allData.forEach(r => {
-    const d = parseData(r.data_hora);
-    if(d) mapDia[d.getDay()]++;
-  });
-  makeChart('chartSemana',{
-    type:'radar',
-    data:{
-      labels:dias,
-      datasets:[{
-        data:dias.map((_,i)=>mapDia[i]),
-        backgroundColor:'rgba(123,97,255,.2)',
-        borderColor:'#7b61ff',
-        borderWidth:2,
-        pointBackgroundColor:'#7b61ff',
-        pointRadius:4
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
-      scales:{r:{grid:{color:'rgba(0,212,255,.1)'},ticks:{color:'rgba(185,197,212,.4)',font:{size:9}},pointLabels:{color:'rgba(185,197,212,.7)',font:{size:10}}}}
+      document.getElementById('paginfoText').textContent = `${total} registros`;
+      renderPaginacao(pages);
     }
-  });
 
-  const notaMap = {'Muito Satisfeito':5,'Satisfeito':4,'Regular':3,'Insatisfeito':2,'Muito Insatisfeito':1};
-  const labelsNota = ['1','2','3','4','5'];
-  const retPorNota = [0,0,0,0,0];
-  const cancPorNota = [0,0,0,0,0];
-  allData.forEach(r => {
-    const n = notaMap[r.nota];
-    if(!n) return;
-    if(r.decisao.toLowerCase().includes('proposta')) retPorNota[n-1]++;
-    else cancPorNota[n-1]++;
-  });
-  makeChart('chartNotaDecisao',{
-    type:'bar',
-    data:{
-      labels:labelsNota,
-      datasets:[
-        {label:'Retenção',data:retPorNota,backgroundColor:'rgba(0,255,178,.6)',borderColor:'#00ffb2',borderWidth:1,borderRadius:4},
-        {label:'Cancelamento',data:cancPorNota,backgroundColor:'rgba(255,45,85,.6)',borderColor:'#ff2d55',borderWidth:1,borderRadius:4},
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'rgba(185,197,212,.7)',font:{size:11}}},tooltip:{backgroundColor:'rgba(13,21,38,.95)'}},
-      scales:{
-        x:{grid:{display:false},ticks:{color:'rgba(185,197,212,.5)'},title:{display:true,text:'Nota do Cliente',color:'rgba(185,197,212,.4)',font:{size:10}}},
-        y:{grid:{color:'rgba(0,212,255,.05)'},ticks:{color:'rgba(185,197,212,.5)'},stacked:false,beginAtZero:true}
+
+    function toggleDetail(id) {
+      const row = document.getElementById(id);
+      if (!row) return;
+      row.classList.toggle('open');
+    }
+
+    // ── SORT TABLE ──
+    function sortTable(key) {
+      if (sortKey === key) sortDir *= -1;
+      else { sortKey = key; sortDir = -1; }
+      renderTabela();
+    }
+
+    // ── MARCAR RESPONDIDO ─────────────────────────────────────────────
+    function marcarRespondido(protocolo, btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
+      btn.style.color = 'var(--amber)';
+      btn.style.borderColor = 'rgba(255,179,0,.3)';
+
+      const url = SCRIPT_URL + '?action=marcarRespondido&protocolo=' + encodeURIComponent(protocolo);
+      const cbName = '__vegas_resp_' + Date.now();
+      const script = document.createElement('script');
+      const timeout = setTimeout(() => {
+        script.remove();
+        btn.textContent = '❌ Erro';
+        btn.style.color = 'var(--red)';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = '📩 Marcar';
+          btn.style.color = 'var(--cyan)';
+          btn.style.borderColor = 'rgba(0,212,255,.3)';
+        }, 2000);
+      }, 10000);
+
+      window[cbName] = function (res) {
+        clearTimeout(timeout);
+        script.remove();
+        delete window[cbName];
+        if (res && res.ok) {
+          btn.textContent = '✅ Respondido';
+          btn.style.color = 'var(--green)';
+          btn.style.borderColor = 'rgba(0,255,178,.3)';
+          btn.style.background = 'rgba(0,255,178,.08)';
+          const item = allData.find(r => r.protocolo === protocolo);
+          if (item) item.respondido = 'Respondido';
+        } else {
+          btn.disabled = false;
+          btn.textContent = '❌ Erro';
+          btn.style.color = 'var(--red)';
+          setTimeout(() => {
+            btn.textContent = '📩 Marcar';
+            btn.style.color = 'var(--cyan)';
+            btn.style.borderColor = 'rgba(0,212,255,.3)';
+            btn.disabled = false;
+          }, 2000);
+        }
+      };
+
+      script.src = url + '&callback=' + cbName;
+      script.onerror = () => { clearTimeout(timeout); window[cbName]({ ok: false }); };
+      document.head.appendChild(script);
+    }
+
+    function renderPaginacao(pages) {
+      const el = document.getElementById('pagBtns');
+      let html = `<button class="pag-btn" onclick="goPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>‹</button>`;
+      for (let i = 1; i <= Math.min(pages, 7); i++) {
+        html += `<button class="pag-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
       }
+      html += `<button class="pag-btn" onclick="goPage(${currentPage + 1})" ${currentPage >= pages ? 'disabled' : ''}>›</button>`;
+      el.innerHTML = html;
     }
-  });
+    function goPage(p) { currentPage = p; renderTabela(); }
 
-  const combMap = {};
-  allData.forEach(r => {
-    const ms = (r.motivos||'').split(',').map(m=>m.trim()).filter(Boolean);
-    if(ms.length >= 2){
-      for(let i=0;i<ms.length-1;i++){
-        const k = [ms[i],ms[i+1]].sort().join(' + ');
-        combMap[k] = (combMap[k]||0)+1;
-      }
-    }
-  });
-  const topComb = Object.entries(combMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const maxC = topComb[0]?.[1]||1;
-  const colors = ['#7b61ff','#00d4ff','#00ffb2','#ffb300','#ff2d55'];
-  const elComb = document.getElementById('motivosCombList');
-  if(elComb){
-    elComb.innerHTML = topComb.map(([k,v],i) => `
+    // ── ANÁLISE ───────────────────────────────────────────────────────
+    function renderAnalise() {
+      const mapMes = {};
+      allData.forEach(r => {
+        const d = parseData(r.data_hora);
+        if (!d) return;
+        const k = `${d.getMonth() + 1}/${d.getFullYear()}`;
+        if (!mapMes[k]) mapMes[k] = 0;
+        mapMes[k]++;
+      });
+      const mesLabels = Object.keys(mapMes);
+      const mesVals = Object.values(mapMes);
+
+      makeChart('chartTendencia', {
+        type: 'bar',
+        data: {
+          labels: mesLabels,
+          datasets: [{
+            data: mesVals,
+            backgroundColor: 'rgba(0,212,255,.25)',
+            borderColor: '#00d4ff',
+            borderWidth: 2,
+            borderRadius: 6,
+            hoverBackgroundColor: 'rgba(0,212,255,.45)'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(13,21,38,.95)' } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: 'rgba(185,197,212,.5)', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(0,212,255,.05)' }, ticks: { color: 'rgba(185,197,212,.5)' }, beginAtZero: true }
+          }
+        }
+      });
+
+      const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const mapDia = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+      allData.forEach(r => {
+        const d = parseData(r.data_hora);
+        if (d) mapDia[d.getDay()]++;
+      });
+      makeChart('chartSemana', {
+        type: 'radar',
+        data: {
+          labels: dias,
+          datasets: [{
+            data: dias.map((_, i) => mapDia[i]),
+            backgroundColor: 'rgba(123,97,255,.2)',
+            borderColor: '#7b61ff',
+            borderWidth: 2,
+            pointBackgroundColor: '#7b61ff',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { r: { grid: { color: 'rgba(0,212,255,.1)' }, ticks: { color: 'rgba(185,197,212,.4)', font: { size: 9 } }, pointLabels: { color: 'rgba(185,197,212,.7)', font: { size: 10 } } } }
+        }
+      });
+
+      const notaMap = { 'Muito Satisfeito': 5, 'Satisfeito': 4, 'Regular': 3, 'Insatisfeito': 2, 'Muito Insatisfeito': 1 };
+      const labelsNota = ['1', '2', '3', '4', '5'];
+      const retPorNota = [0, 0, 0, 0, 0];
+      const cancPorNota = [0, 0, 0, 0, 0];
+      allData.forEach(r => {
+        const n = notaMap[r.nota];
+        if (!n) return;
+        if (r.decisao.toLowerCase().includes('proposta')) retPorNota[n - 1]++;
+        else cancPorNota[n - 1]++;
+      });
+      makeChart('chartNotaDecisao', {
+        type: 'bar',
+        data: {
+          labels: labelsNota,
+          datasets: [
+            { label: 'Retenção', data: retPorNota, backgroundColor: 'rgba(0,255,178,.6)', borderColor: '#00ffb2', borderWidth: 1, borderRadius: 4 },
+            { label: 'Cancelamento', data: cancPorNota, backgroundColor: 'rgba(255,45,85,.6)', borderColor: '#ff2d55', borderWidth: 1, borderRadius: 4 },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: 'rgba(185,197,212,.7)', font: { size: 11 } } }, tooltip: { backgroundColor: 'rgba(13,21,38,.95)' } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: 'rgba(185,197,212,.5)' }, title: { display: true, text: 'Nota do Cliente', color: 'rgba(185,197,212,.4)', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(0,212,255,.05)' }, ticks: { color: 'rgba(185,197,212,.5)' }, stacked: false, beginAtZero: true }
+          }
+        }
+      });
+
+      const combMap = {};
+      allData.forEach(r => {
+        const ms = (r.motivos || '').split(',').map(m => m.trim()).filter(Boolean);
+        if (ms.length >= 2) {
+          for (let i = 0; i < ms.length - 1; i++) {
+            const k = [ms[i], ms[i + 1]].sort().join(' + ');
+            combMap[k] = (combMap[k] || 0) + 1;
+          }
+        }
+      });
+      const topComb = Object.entries(combMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const maxC = topComb[0]?.[1] || 1;
+      const colors = ['#7b61ff', '#00d4ff', '#00ffb2', '#ffb300', '#ff2d55'];
+      const elComb = document.getElementById('motivosCombList');
+      if (elComb) {
+        elComb.innerHTML = topComb.map(([k, v], i) => `
       <div class="motivo-item">
         <div class="motivo-label" style="font-size:.78rem;min-width:0;flex:1">${k}</div>
         <div class="motivo-bar-wrap" style="min-width:60px">
-          <div class="motivo-bar" style="width:${Math.round(v/maxC*100)}%;background:${colors[i]};"></div>
+          <div class="motivo-bar" style="width:${Math.round(v / maxC * 100)}%;background:${colors[i]};"></div>
         </div>
         <div class="motivo-count">${v}</div>
       </div>
     `).join('') || '<p style="color:var(--muted);font-size:.85rem">Sem dados suficientes</p>';
-  }
-}
+      }
+    }
 
-// ── RETENÇÃO ──────────────────────────────────────────────────────
-function renderRetencao(){
-  const propostas = allData.filter(r=>r.decisao.toLowerCase().includes('proposta'));
-  const taxa = allData.length ? Math.round(propostas.length/allData.length*100) : 0;
+    // ── RETENÇÃO ──────────────────────────────────────────────────────
+    function renderRetencao() {
+      const propostas = allData.filter(r => r.decisao.toLowerCase().includes('proposta'));
+      const taxa = allData.length ? Math.round(propostas.length / allData.length * 100) : 0;
 
-  const notaMap = {'Muito Satisfeito':5,'Satisfeito':4,'Regular':3,'Insatisfeito':2,'Muito Insatisfeito':1};
-  const notas = propostas.map(r=>notaMap[r.nota]).filter(Boolean);
-  const media = notas.length ? (notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(1) : '—';
+      const notaMap = { 'Muito Satisfeito': 5, 'Satisfeito': 4, 'Regular': 3, 'Insatisfeito': 2, 'Muito Insatisfeito': 1 };
+      const notas = propostas.map(r => notaMap[r.nota]).filter(Boolean);
+      const media = notas.length ? (notas.reduce((a, b) => a + b, 0) / notas.length).toFixed(1) : '—';
 
-  set('retPropostas', propostas.length);
-  set('retTaxa', taxa+'%');
-  set('retNota', media);
+      set('retPropostas', propostas.length);
+      set('retTaxa', taxa + '%');
+      set('retNota', media);
 
-  const tbody = document.getElementById('retencaoBody');
-  if(!propostas.length){
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum cliente para proposta.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = propostas.map(r => `
+      const tbody = document.getElementById('retencaoBody');
+      if (!propostas.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum cliente para proposta.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = propostas.map(r => `
     <tr>
       <td><span class="proto-tag">${r.protocolo}</span></td>
       <td>${r.nome}</td>
@@ -1644,7 +2359,7 @@ function renderRetencao(){
       <td>${r.nota}</td>
       <td>${r.data_hora}</td>
       <td>
-        <a href="https://wa.me/5524998235101?text=${encodeURIComponent('Olá '+r.nome+'! Segue sua proposta personalizada. Protocolo: '+r.protocolo)}"
+        <a href="https://wa.me/5524998235101?text=${encodeURIComponent('Olá ' + r.nome + '! Segue sua proposta personalizada. Protocolo: ' + r.protocolo)}"
            target="_blank" style="color:var(--green);font-size:.8rem;font-weight:700;text-decoration:none;
            border:1px solid rgba(0,255,178,.3);padding:3px 10px;border-radius:6px;background:rgba(0,255,178,.06);">
           💬 WhatsApp
@@ -1652,66 +2367,70 @@ function renderRetencao(){
       </td>
     </tr>
   `).join('');
-}
+    }
 
-// ── ALERTAS ───────────────────────────────────────────────────────
-function renderAlertas(){
-  const alertas = [];
+    // ── ALERTAS ───────────────────────────────────────────────────────
+    function renderAlertas() {
+      const alertas = [];
 
-  const pendentes = allData.filter(r => {
-    const d = parseData(r.data_hora);
-    return d && (new Date()-d)/3600000 < 48;
-  });
-  if(pendentes.length > 0){
-    alertas.push({tipo:'amber', ico:'⏳',
-      text: `<strong>${pendentes.length} solicitações</strong> nas últimas 48h aguardam contato da equipe.`,
-      time: 'Verificar agora'
-    });
-  }
+      const pendentes = allData.filter(r => {
+        const d = parseData(r.data_hora);
+        return d && (new Date() - d) / 3600000 < 48;
+      });
+      if (pendentes.length > 0) {
+        alertas.push({
+          tipo: 'amber', ico: '⏳',
+          text: `<strong>${pendentes.length} solicitações</strong> nas últimas 48h aguardam contato da equipe.`,
+          time: 'Verificar agora'
+        });
+      }
 
-  const criticos = allData.filter(r => {
-    const d = parseData(r.data_hora);
-    return d && (new Date()-d)/3600000 < 72 && r.nota === 'Muito Insatisfeito' && !r.decisao.toLowerCase().includes('proposta');
-  });
-  if(criticos.length){
-    alertas.push({tipo:'red', ico:'🚨',
-      text: `<strong>${criticos.length} cliente(s)</strong> com nota "Muito Insatisfeito" solicitaram cancelamento nos últimos 3 dias.`,
-      time: 'Ação urgente recomendada'
-    });
-  }
+      const criticos = allData.filter(r => {
+        const d = parseData(r.data_hora);
+        return d && (new Date() - d) / 3600000 < 72 && r.nota === 'Muito Insatisfeito' && !r.decisao.toLowerCase().includes('proposta');
+      });
+      if (criticos.length) {
+        alertas.push({
+          tipo: 'red', ico: '🚨',
+          text: `<strong>${criticos.length} cliente(s)</strong> com nota "Muito Insatisfeito" solicitaram cancelamento nos últimos 3 dias.`,
+          time: 'Ação urgente recomendada'
+        });
+      }
 
-  const hoje = new Date();
-  const inicioSemana = new Date(hoje);
-  inicioSemana.setDate(hoje.getDate() - hoje.getDay());
-  const semana = allData.filter(r => {
-    const d = parseData(r.data_hora);
-    return d && d >= inicioSemana;
-  });
-  if(semana.length >= 5){
-    alertas.push({tipo:'amber', ico:'📈',
-      text: `<strong>${semana.length} solicitações</strong> registradas nesta semana. Volume acima da média.`,
-      time: 'Esta semana'
-    });
-  }
+      const hoje = new Date();
+      const inicioSemana = new Date(hoje);
+      inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+      const semana = allData.filter(r => {
+        const d = parseData(r.data_hora);
+        return d && d >= inicioSemana;
+      });
+      if (semana.length >= 5) {
+        alertas.push({
+          tipo: 'amber', ico: '📈',
+          text: `<strong>${semana.length} solicitações</strong> registradas nesta semana. Volume acima da média.`,
+          time: 'Esta semana'
+        });
+      }
 
-  const propostas7d = allData.filter(r => {
-    const d = parseData(r.data_hora);
-    const limite = new Date(); limite.setDate(limite.getDate()-7);
-    return d && d >= limite && r.decisao.toLowerCase().includes('proposta');
-  });
-  if(propostas7d.length > 0){
-    alertas.push({tipo:'green', ico:'✅',
-      text: `<strong>${propostas7d.length} cliente(s)</strong> solicitaram proposta personalizada nos últimos 7 dias. Oportunidade de retenção ativa.`,
-      time: 'Últimos 7 dias'
-    });
-  }
+      const propostas7d = allData.filter(r => {
+        const d = parseData(r.data_hora);
+        const limite = new Date(); limite.setDate(limite.getDate() - 7);
+        return d && d >= limite && r.decisao.toLowerCase().includes('proposta');
+      });
+      if (propostas7d.length > 0) {
+        alertas.push({
+          tipo: 'green', ico: '✅',
+          text: `<strong>${propostas7d.length} cliente(s)</strong> solicitaram proposta personalizada nos últimos 7 dias. Oportunidade de retenção ativa.`,
+          time: 'Últimos 7 dias'
+        });
+      }
 
-  const el = document.getElementById('alertasList');
-  if(!alertas.length){
-    el.innerHTML = `<div class="empty-state"><div class="e-ico">✅</div><p>Nenhum alerta no momento.</p></div>`;
-    return;
-  }
-  el.innerHTML = alertas.map(a => `
+      const el = document.getElementById('alertasList');
+      if (!alertas.length) {
+        el.innerHTML = `<div class="empty-state"><div class="e-ico">✅</div><p>Nenhum alerta no momento.</p></div>`;
+        return;
+      }
+      el.innerHTML = alertas.map(a => `
     <div class="alert-item ${a.tipo}">
       <div class="alert-ico">${a.ico}</div>
       <div>
@@ -1720,12 +2439,13 @@ function renderAlertas(){
       </div>
     </div>
   `).join('');
-}
+    }
 
-// ── INIT ──────────────────────────────────────────────────────────
-startClock();
-carregarDados();
-setupAutoRefresh();
-</script>
+    // ── INIT ──────────────────────────────────────────────────────────
+    startClock();
+    carregarDados();
+    setupAutoRefresh();
+  </script>
 </body>
+
 </html>
