@@ -1402,6 +1402,7 @@
                 <tr>
                   <th onclick="sortTable('protocolo')">Protocolo ↕</th>
                   <th onclick="sortTable('nome')">Cliente ↕</th>
+                  <th onclick="sortTable('email')">Email</th>
                   <th onclick="sortTable('telefone')">Telefone</th>
                   <th onclick="sortTable('nota')">Nota ↕</th>
                   <th onclick="sortTable('nps')">NPS ↕</th>
@@ -1414,7 +1415,7 @@
               </thead>
               <tbody id="tabelaBody">
                 <tr>
-                  <td colspan="9" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td>
+                  <td colspan="10" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td>
                 </tr>
               </tbody>
             </table>
@@ -2108,7 +2109,7 @@ function doGet(e) {
 
       const tbody = document.getElementById('tabelaBody');
       if (!slice.length) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:40px">Nenhum registro encontrado.</td></tr>`;
       } else {
         tbody.innerHTML = slice.map((r, i) => {
           const isProp = r.decisao.toLowerCase().includes('proposta');
@@ -2127,6 +2128,7 @@ function doGet(e) {
           return `<tr onclick="toggleDetail('${rowId}')" style="cursor:pointer;">
         <td><span class="proto-tag">${r.protocolo}</span></td>
         <td>${r.nome}</td>
+        <td>${r.email || '—'}</td>
         <td>${r.telefone}</td>
         <td>${r.nota}</td>
         <td>${npsDisplay}</td>
@@ -2137,7 +2139,7 @@ function doGet(e) {
         <td>${btnHtml}</td>
       </tr>
       <tr id="${rowId}" class="row-detail">
-        <td colspan="11">
+        <td colspan="12">
           <div class="detail-label">📝 Descrição Completa — ${r.protocolo} · ${r.nome}</div>
           <div class="detail-text">${desc || '<em style="color:var(--muted)">Nenhuma descrição informada pelo cliente.</em>'}</div>
           ${r.motivos && r.motivos !== 'Não informado' ? '<div class="detail-label" style="margin-top:10px">📋 Motivos</div><div class="detail-text">' + r.motivos + '</div>' : ''}
