@@ -1168,6 +1168,45 @@
     .detail-text {
       color: var(--text);
     }
+
+    /* ── RETIRADAS ── */
+    .ret-kpi { cursor: pointer; }
+    .ret-kpi.sel { border-color: var(--border-h); box-shadow: 0 0 0 1px var(--border-h) inset; }
+
+    .prazo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+
+    .prazo-pill .pdot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .faixa-verde { color: var(--green); background: rgba(0, 255, 178, .08); border-color: rgba(0, 255, 178, .3); }
+    .faixa-amarelo { color: var(--amber); background: rgba(255, 179, 0, .08); border-color: rgba(255, 179, 0, .3); }
+    .faixa-vermelho { color: var(--red); background: rgba(255, 45, 85, .08); border-color: rgba(255, 45, 85, .35); }
+    .faixa-vencido { color: #fff; background: var(--red); border-color: var(--red); }
+    .faixa-vencido .pdot, .faixa-vermelho .pdot { animation: blink 1s ease infinite; }
+
+    tr.row-faixa-verde td:first-child { box-shadow: inset 3px 0 0 var(--green); }
+    tr.row-faixa-amarelo td:first-child { box-shadow: inset 3px 0 0 var(--amber); }
+    tr.row-faixa-vermelho td:first-child,
+    tr.row-faixa-vencido td:first-child { box-shadow: inset 3px 0 0 var(--red); }
+    tr.row-faixa-vencido { background: rgba(255, 45, 85, .05); }
+
+    .prazo-bar { width: 90px; height: 4px; background: rgba(255, 255, 255, .06); border-radius: 4px; overflow: hidden; }
+    .prazo-bar > div { height: 100%; border-radius: 4px; }
+
+    .badge-count.amber { background: rgba(255, 179, 0, .15); border-color: rgba(255, 179, 0, .3); color: var(--amber); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .faixa-vencido .pdot, .faixa-vermelho .pdot, .badge-dot { animation: none; }
+    }
   </style>
 </head>
 
@@ -1204,6 +1243,10 @@
       <div class="nav-section">Operações</div>
       <div class="nav-item" onclick="setSection('retencao')">
         <span class="ico">🎯</span> Retenção
+      </div>
+      <div class="nav-item" onclick="setSection('retiradas')">
+        <span class="ico">📦</span> Retiradas
+        <span class="badge-count" id="badgeRetiradas" style="display:none">0</span>
       </div>
       <div class="nav-item" onclick="setSection('alertas')">
         <span class="ico">🔔</span> Alertas
@@ -1537,6 +1580,80 @@
         </div>
       </section>
 
+      <section class="section" id="sec-retiradas">
+        <div class="page-header">
+          <div>
+            <h1>Retiradas</h1>
+            <p>Clientes que cancelaram: prazo de 30 dias para retirar os equipamentos</p>
+          </div>
+          <div class="page-header-right">
+            <div class="table-search">
+              🔍 <input type="text" id="searchRetirada" placeholder="Buscar nome, protocolo, telefone..."
+                oninput="renderRetiradas()">
+            </div>
+            <select class="filter-select" id="filterRetiradaStatus" onchange="renderRetiradas()">
+              <option value="pendentes" selected>Pendentes</option>
+              <option value="feitas">Já retiradas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card ret-kpi" data-faixa="vencido" onclick="filtrarFaixa('vencido')">
+            <div class="kpi-accent accent-red"></div>
+            <div class="kpi-label">Vencidos</div>
+            <div class="kpi-value red" id="retKpiVencido">—</div>
+            <div class="kpi-sub">prazo de 30 dias estourado</div>
+          </div>
+          <div class="kpi-card ret-kpi" data-faixa="vermelho" onclick="filtrarFaixa('vermelho')">
+            <div class="kpi-accent accent-red"></div>
+            <div class="kpi-label">Críticos</div>
+            <div class="kpi-value red" id="retKpiVermelho">—</div>
+            <div class="kpi-sub">7 a 0 dias restantes</div>
+          </div>
+          <div class="kpi-card ret-kpi" data-faixa="amarelo" onclick="filtrarFaixa('amarelo')">
+            <div class="kpi-accent accent-amber"></div>
+            <div class="kpi-label">Atenção</div>
+            <div class="kpi-value amber" id="retKpiAmarelo">—</div>
+            <div class="kpi-sub">15 a 8 dias restantes</div>
+          </div>
+          <div class="kpi-card ret-kpi" data-faixa="verde" onclick="filtrarFaixa('verde')">
+            <div class="kpi-accent accent-green"></div>
+            <div class="kpi-label">No prazo</div>
+            <div class="kpi-value green" id="retKpiVerde">—</div>
+            <div class="kpi-sub">30 a 16 dias restantes</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-top">
+            <div class="table-top-title" id="retTblTitle">Retiradas pendentes</div>
+            <button class="pag-btn" id="btnLimparFaixa" style="display:none" onclick="filtrarFaixa('')">Mostrar todas as faixas</button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Protocolo</th>
+                  <th>Cliente</th>
+                  <th>Telefone</th>
+                  <th>Solicitado em</th>
+                  <th>Prazo final</th>
+                  <th>Restam</th>
+                  <th>Prazo</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="retiradasBody">
+                <tr>
+                  <td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-alertas">
         <div class="page-header">
           <div>
@@ -1670,7 +1787,7 @@ function doGet(e) {
       const titles = {
         overview: 'Visão Geral', cancelamentos: 'Cancelamentos',
         analise: 'Análise Detalhada', retencao: 'Retenção',
-        alertas: 'Alertas', config: 'Configurações'
+        retiradas: 'Retiradas', alertas: 'Alertas', config: 'Configurações'
       };
       document.getElementById('topbarTitle').textContent = titles[id] || id;
 
@@ -1678,6 +1795,7 @@ function doGet(e) {
       if (id === 'analise') renderAnalise();
       if (id === 'retencao') renderRetencao();
       if (id === 'alertas') renderAlertas();
+      if (id === 'retiradas') renderRetiradas();
       if (id === 'config') {
         document.getElementById('cfgScriptUrl').value = SCRIPT_URL;
         document.getElementById('cfgAutoRefresh').value = AUTO_REFRESH_SEC;
@@ -1772,6 +1890,8 @@ function doGet(e) {
         data_hora: formatData(String(r.data_hora || r['Data/Hora'] || r['data'] || '')),
         respondido: String(r.respondido || r['Respondido'] || r['Status'] || ''),
         nps: String(r.nps || r.NPS || r['NPS'] || ''),
+        status: String(r.status || r['Status'] || ''),
+        retirada: String(r.retirada || r['Retirada'] || ''),
       };
     }
 
@@ -1823,6 +1943,9 @@ function doGet(e) {
       renderChartSatisfacao(filteredData);
       renderMotivos(filteredData);
       renderBadge();
+      renderBadgeRetiradas();
+      if (document.getElementById('sec-retiradas').classList.contains('active')) renderRetiradas();
+      if (document.getElementById('sec-alertas').classList.contains('active')) renderAlertas();
     }
 
     // ── NPS ───────────────────────────────────────────────────────────
@@ -2442,6 +2565,26 @@ function doGet(e) {
         });
       }
 
+      const ret = calcularRetiradas().pendentes;
+      const venc = ret.filter(r => r.faixa === 'vencido').length;
+      const crit = ret.filter(r => r.faixa === 'vermelho').length;
+      const aten = ret.filter(r => r.faixa === 'amarelo').length;
+      if (venc) alertas.unshift({
+        tipo: 'red', ico: '⛔',
+        text: `<strong>${venc} retirada(s)</strong> com prazo de 30 dias vencido.`,
+        time: 'Ver aba Retiradas'
+      });
+      if (crit) alertas.push({
+        tipo: 'red', ico: '📦',
+        text: `<strong>${crit} retirada(s)</strong> vencem nos próximos 7 dias.`,
+        time: 'Ver aba Retiradas'
+      });
+      if (aten) alertas.push({
+        tipo: 'amber', ico: '📦',
+        text: `<strong>${aten} retirada(s)</strong> entre 15 e 8 dias do prazo.`,
+        time: 'Ver aba Retiradas'
+      });
+
       const el = document.getElementById('alertasList');
       if (!alertas.length) {
         el.innerHTML = `<div class="empty-state"><div class="e-ico">✅</div><p>Nenhum alerta no momento.</p></div>`;
@@ -2456,6 +2599,134 @@ function doGet(e) {
       </div>
     </div>
   `).join('');
+    }
+
+    // ── RETIRADAS ─────────────────────────────────────────────────────
+    const PRAZO_RETIRADA = 30;
+    let faixaSel = '';
+
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function faixaRetirada(dias) {
+      if (dias < 0) return 'vencido';
+      if (dias <= 7) return 'vermelho';
+      if (dias <= 15) return 'amarelo';
+      return 'verde';
+    }
+
+    function isCancelamento(r) {
+      if (r.status) return r.status === 'Cancelamento';
+      return !r.decisao.toLowerCase().includes('proposta');
+    }
+
+    function calcularRetiradas() {
+      const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+      const pendentes = [], feitas = [];
+      allData.filter(isCancelamento).forEach(r => {
+        const d = parseData(r.data_hora);
+        if (!d) return;
+        const ini = new Date(d); ini.setHours(0, 0, 0, 0);
+        const prazo = new Date(ini); prazo.setDate(prazo.getDate() + PRAZO_RETIRADA);
+        const dias = PRAZO_RETIRADA - Math.round((hoje - ini) / 86400000);
+        const item = { ...r, dias, prazo, faixa: faixaRetirada(dias) };
+        (r.retirada && r.retirada.trim() ? feitas : pendentes).push(item);
+      });
+      pendentes.sort((a, b) => a.dias - b.dias);
+      feitas.sort((a, b) => (parseData(b.retirada) || 0) - (parseData(a.retirada) || 0));
+      return { pendentes, feitas };
+    }
+
+    function renderBadgeRetiradas() {
+      const { pendentes } = calcularRetiradas();
+      const urg = pendentes.filter(r => r.faixa === 'vencido' || r.faixa === 'vermelho').length;
+      const aten = pendentes.filter(r => r.faixa === 'amarelo').length;
+      const el = document.getElementById('badgeRetiradas');
+      if (!el) return;
+      const n = urg || aten;
+      el.textContent = n;
+      el.style.display = n ? '' : 'none';
+      el.classList.toggle('amber', !urg && !!aten);
+    }
+
+    function filtrarFaixa(f) {
+      faixaSel = faixaSel === f ? '' : f;
+      document.getElementById('filterRetiradaStatus').value = 'pendentes';
+      renderRetiradas();
+    }
+
+    function renderRetiradas() {
+      const { pendentes, feitas } = calcularRetiradas();
+      const cont = { vencido: 0, vermelho: 0, amarelo: 0, verde: 0 };
+      pendentes.forEach(r => cont[r.faixa]++);
+      set('retKpiVencido', cont.vencido);
+      set('retKpiVermelho', cont.vermelho);
+      set('retKpiAmarelo', cont.amarelo);
+      set('retKpiVerde', cont.verde);
+      document.querySelectorAll('.ret-kpi').forEach(k => k.classList.toggle('sel', k.dataset.faixa === faixaSel));
+      document.getElementById('btnLimparFaixa').style.display = faixaSel ? '' : 'none';
+
+      const modo = document.getElementById('filterRetiradaStatus').value;
+      const busca = (document.getElementById('searchRetirada').value || '').toLowerCase();
+      let lista = modo === 'feitas' ? feitas : pendentes;
+      if (modo === 'pendentes' && faixaSel) lista = lista.filter(r => r.faixa === faixaSel);
+      if (busca) lista = lista.filter(r =>
+        r.nome.toLowerCase().includes(busca) ||
+        r.protocolo.toLowerCase().includes(busca) ||
+        r.telefone.toLowerCase().includes(busca));
+
+      const nomesFaixa = { vencido: 'vencidas', vermelho: 'críticas', amarelo: 'em atenção', verde: 'no prazo' };
+      document.getElementById('retTblTitle').textContent = modo === 'feitas'
+        ? 'Retiradas concluídas'
+        : 'Retiradas pendentes' + (faixaSel ? ' ' + nomesFaixa[faixaSel] : '');
+
+      const tbody = document.getElementById('retiradasBody');
+      if (!lista.length) {
+        const msg = modo === 'feitas' ? 'Nenhuma retirada registrada ainda.' : 'Nenhuma retirada pendente nesta faixa.';
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">${msg}</td></tr>`;
+        return;
+      }
+
+      const corBar = { verde: 'var(--green)', amarelo: 'var(--amber)', vermelho: 'var(--red)', vencido: 'var(--red)' };
+      const pad = n => String(n).padStart(2, '0');
+      const fmt = d => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+
+      tbody.innerHTML = lista.map(r => {
+        const feita = modo === 'feitas';
+        const restam = r.dias < 0 ? `${Math.abs(r.dias)}d atrasado` : r.dias === 0 ? 'vence hoje' : `${r.dias}d`;
+        const pct = Math.max(0, Math.min(100, Math.round((PRAZO_RETIRADA - r.dias) / PRAZO_RETIRADA * 100)));
+        const acao = feita
+          ? `<span class="tag-respondido">✅ ${esc(formatData(r.retirada).slice(0, 10))}</span>`
+          : `<button class="btn-respondido" onclick="marcarRetirada('${esc(r.protocolo)}',this)">📦 Marcar retirada</button>`;
+        return `<tr class="${feita ? '' : 'row-faixa-' + r.faixa}">
+          <td><span class="proto-tag">${esc(r.protocolo)}</span></td>
+          <td>${esc(r.nome)}</td>
+          <td>${esc(r.telefone)}</td>
+          <td>${esc(r.data_hora.slice(0, 10))}</td>
+          <td>${fmt(r.prazo)}</td>
+          <td>${feita ? '—' : `<span class="prazo-pill faixa-${r.faixa}"><span class="pdot"></span>${restam}</span>`}</td>
+          <td>${feita ? '—' : `<div class="prazo-bar" title="${pct}% do prazo consumido"><div style="width:${pct}%;background:${corBar[r.faixa]}"></div></div>`}</td>
+          <td>${acao}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    async function marcarRetirada(protocolo, btn) {
+      const cliente = allData.find(r => r.protocolo === protocolo);
+      if (!confirm(`Confirmar retirada dos equipamentos de ${cliente ? cliente.nome : protocolo}?`)) return;
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
+      try {
+        const res = await fetchViaJsonp(SCRIPT_URL + '?action=marcarRetirada&protocolo=' + encodeURIComponent(protocolo));
+        if (!res || !res.ok) throw new Error(res && res.erro || 'Falha');
+        if (cliente) cliente.retirada = new Date().toISOString();
+        processar();
+        renderRetiradas();
+      } catch (err) {
+        btn.textContent = '❌ ' + err.message;
+        setTimeout(() => { btn.disabled = false; btn.textContent = '📦 Marcar retirada'; }, 2500);
+      }
     }
 
     // ── INIT ──────────────────────────────────────────────────────────
